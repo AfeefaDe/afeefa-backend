@@ -38,11 +38,6 @@ gem 'tzinfo-data'
 # project relevant gems #
 #########################
 
-# grape API
-gem 'grape' # see https://github.com/ruby-grape/grape
-gem 'hashie-forbidden_attributes' # see https://github.com/ruby-grape/grape#rails
-gem 'grape-swagger'
-
 # user authentication
 gem 'devise' # see https://github.com/plataformatec/devise
 
@@ -58,7 +53,19 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 
+  gem 'minitest-rails'
+  gem 'minitest-reporters'
+
+  gem 'factory_girl_rails'
+  gem 'mocha'
+  gem 'shoulda-context'
+  gem 'capybara'
+  gem 'minitest-rails-capybara'
+
+  gem 'rails_best_practices'
   gem 'bullet'
+
+  gem 'simplecov', require: false
 end
 
 group :development do
@@ -70,16 +77,4 @@ group :development do
 
   # Use Capistrano for deployment
   gem 'capistrano-rails'
-end
-
-group :test do
-  gem 'minitest-rails'
-  gem 'minitest-reporters'
-  gem 'capybara'
-  gem 'minitest-rails-capybara'
-  gem 'rails_best_practices'
-  gem 'simplecov', require: false
-  gem 'factory_girl_rails'
-  gem 'shoulda-context'
-  gem 'mocha'
 end
