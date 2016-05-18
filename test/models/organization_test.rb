@@ -36,7 +36,7 @@ class OrganizationTest < ActiveSupport::TestCase
     @my_orga.title = '123'
     assert !@my_orga.valid?
 
-    @my_orga = FactoryGirl.build(:organization)
+    @my_orga = build(:organization)
     assert @my_orga.valid?
   end
 
