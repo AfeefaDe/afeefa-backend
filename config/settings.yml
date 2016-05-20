@@ -1,3 +1,4 @@
 api:
   token: '007'
   allow_token_as_param: true
+  admin_secret: '0815'
