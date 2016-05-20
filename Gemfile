@@ -40,14 +40,21 @@ gem 'tzinfo-data'
 
 # user authentication
 gem 'devise' # see https://github.com/plataformatec/devise
+
 # roll and right management
+
 gem 'cancancan', '~> 1.10' # see https://github.com/CanCanCommunity/cancancan
+
 # image attachments
 # gem 'paperclip', '~> 4.3' # see https://github.com/thoughtbot/paperclip
 # or
 # gem 'carrierwave' # see https://github.com/carrierwaveuploader/carrierwave
+
 # extract configuration to settings
 gem 'config'
+
+# redmine integration
+gem 'airbrake', '~> 5.3'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

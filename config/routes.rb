@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get 'ping' => 'base#ping'
+      get 'test_airbrake' => 'base#test_airbrake'
 
       # resources :user
     end

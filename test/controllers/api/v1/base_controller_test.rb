@@ -1,4 +1,5 @@
 require 'test_helper'
+require "#{Rails.root}/app/controllers/api/v1/exceptions"
 
 class Api::V1::BaseControllerTest < ActionController::TestCase
 
@@ -12,6 +13,22 @@ class Api::V1::BaseControllerTest < ActionController::TestCase
       }.to_json
       assert_equal expected, response.body
     end
+  end
+
+  should 'trigger airbrake_test method only for valid admin_secret' do
+    set_auth_header
+    assert_raise Api::V1::TestAirbrakeException do
+      get :test_airbrake, admin_secret: '0815'
+    end
+
+    get :test_airbrake, admin_secret: 'abc'
+    assert_response 403
+
+    get :test_airbrake, admin_secret: ''
+    assert_response 403
+
+    get :test_airbrake
+    assert_response 403
   end
 
   context 'token as params allowed' do

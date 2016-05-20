@@ -1,6 +1,6 @@
 class Category < ActiveRecord::Base
   belongs_to :meta_category
-  has_many :sub_categories, class: 'Category', foreign_key: :meta_category_id
+  has_many :sub_categories, class_name: 'Category', foreign_key: :meta_category_id
 
   has_and_belongs_to_many :organizations
 
