@@ -1,0 +1,3 @@
+api:
+  token: '007'
+  allow_token_as_param: true

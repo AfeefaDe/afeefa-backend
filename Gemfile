@@ -34,33 +34,37 @@ gem 'tzinfo-data'
 # Use Unicorn as the app server
 # gem 'unicorn'
 
-#########################
+##########################
 # project relevant gems #
-#########################
+########################
 
 # user authentication
 gem 'devise' # see https://github.com/plataformatec/devise
-
 # roll and right management
 gem 'cancancan', '~> 1.10' # see https://github.com/CanCanCommunity/cancancan
-
 # image attachments
 # gem 'paperclip', '~> 4.3' # see https://github.com/thoughtbot/paperclip
 # or
 # gem 'carrierwave' # see https://github.com/carrierwaveuploader/carrierwave
+# extract configuration to settings
+gem 'config'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  # for debug
   gem 'byebug'
 
+  # test framework
   gem 'minitest-rails'
   gem 'minitest-reporters'
 
+  # for tests
   gem 'factory_girl_rails'
   gem 'mocha'
   gem 'shoulda-context'
   gem 'capybara'
   gem 'minitest-rails-capybara'
+  gem 'timecop'
 
   gem 'rails_best_practices'
   gem 'bullet'
