@@ -4,7 +4,7 @@ class Api::V1::BaseController < ApplicationController
 
   before_action :ensure_host
   before_action :ensure_protocol
-  before_action :authenticate
+  before_action :authenticate, except: :ping
   before_action :ensure_admin_secret, only: :test_airbrake
 
   def ping
@@ -39,17 +39,18 @@ class Api::V1::BaseController < ApplicationController
   end
 
   def authenticate
-    if Settings.api.allow_token_as_param && token = params[:token]
-      if token == Settings.api.token
-        true
-      else
-        render text: 'auth failed', status: 401
-        false
-      end
+    mail = auth_params[:email]
+    password = auth_params[:password]
+
+    if (user = User.find_by_email(mail)) &&
+        user.valid_password?(password) # TODO: && user.authenticate!
+      # TODO: set the current user here!
+      # User.current = user
+      true
     else
-      authenticate_or_request_with_http_token do |token, _options|
-        token == Settings.api.token
-      end
+      warden.custom_failure!
+      render text: 'auth failed', status: 401
+      false
     end
   end
 
@@ -60,6 +61,10 @@ class Api::V1::BaseController < ApplicationController
       head status: 403
       false
     end
+  end
+
+  def auth_params
+    params.permit(:email, :password)
   end
 
 end

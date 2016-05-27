@@ -38,5 +38,4 @@ class User < ActiveRecord::Base
     organizations.pluck(:id).include?(orga.id)
   end
 
-
 end
