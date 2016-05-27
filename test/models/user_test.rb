@@ -77,6 +77,19 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  context 'As user' do
+
+    should 'I want to update my data to keep it up to date' do
+      assert_no_difference('User.count') do
+        new_forename = @user.forename+'123'
+        assert_not_equal new_forename, @user.forename
+        @user.update(forename: new_forename)
+        assert_equal new_forename, @user.forename
+      end
+    end
+
+  end
+
   context 'As admin' do
     setup do
       @user = create(:admin)
