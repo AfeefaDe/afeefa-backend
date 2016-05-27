@@ -82,9 +82,12 @@ class UserTest < ActiveSupport::TestCase
     should 'I want to update my data to keep it up to date' do
       assert_no_difference('User.count') do
         new_forename = @user.forename+'123'
+        new_surname = @user.surname+'123'
         assert_not_equal new_forename, @user.forename
-        @user.update(forename: new_forename)
+        assert_not_equal new_surname, @user.surname
+        @user.update(forename: new_forename, surname: new_surname)
         assert_equal new_forename, @user.forename
+        assert_equal new_surname, @user.surname
       end
     end
 
