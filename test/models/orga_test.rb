@@ -53,7 +53,7 @@ class OrgaTest < ActiveSupport::TestCase
         orga.add_new_member(new_member: new_user, admin: @user)
       end
 
-      assert_equal(orga, new_user.orgas.first)
+      assert_equal(orga, new_user.reload.orgas.first)
     end
 
     should 'I must not add a new member to a foreign orga' do
@@ -67,7 +67,6 @@ class OrgaTest < ActiveSupport::TestCase
           end
         end
       end
-
     end
 
     should 'I must not add the same member to my orga again' do
@@ -81,9 +80,7 @@ class OrgaTest < ActiveSupport::TestCase
           orga.add_new_member(new_member: new_user, admin: @user)
         end
       end
-
     end
-
   end
 
 end
