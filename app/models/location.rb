@@ -6,7 +6,7 @@ class Location < ActiveRecord::Base
   COUNTRY = 'country'
   SCOPES = [DISTRICT, CITY, STATE, COUNTRY]
 
-  belongs_to :organization
+  belongs_to :orga
 
   belongs_to :locateable
 

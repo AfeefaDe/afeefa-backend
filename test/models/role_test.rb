@@ -24,7 +24,7 @@ class RoleTest < ActiveSupport::TestCase
     user.roles << @role
     assert !@role.valid?
 
-    orga = create(:organization)
+    orga = create(:orga)
     orga.roles << @role
     assert @role.valid?, @role.errors.full_messages
   end

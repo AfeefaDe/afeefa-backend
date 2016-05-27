@@ -5,7 +5,7 @@ module Thing
   included do
     has_many :owner_thing_relations, as: :ownable
     has_many :users, through: :owner_thing_relations, source: :thingable, source_type: 'User'
-    has_many :organizations, through: :owner_thing_relations, source: :thingable, source_type: 'Organization'
+    has_many :orgas, through: :owner_thing_relations, source: :thingable, source_type: 'Orga'
 
     has_many :thing_category_relations
     has_many :categories, through: :thing_category_relation
