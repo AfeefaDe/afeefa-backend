@@ -59,7 +59,13 @@ Rails.application.routes.draw do
       get 'ping' => 'base#ping'
       get 'test_airbrake' => 'base#test_airbrake'
 
-      # resources :user
+      # resources :users
+      resource :orgas do
+        member do
+          post :create_member, path: 'users'
+          put :add_member, path: 'users'
+        end
+      end
     end
   end
 
