@@ -20,11 +20,11 @@ class RoleTest < ActiveSupport::TestCase
   test 'role should have user and orga' do
     assert !@role.valid?
 
-    user = FactoryGirl.create(:valid_user)
+    user = create(:user)
     user.roles << @role
     assert !@role.valid?
 
-    orga = FactoryGirl.create(:organization)
+    orga = create(:organization)
     orga.roles << @role
     assert @role.valid?, @role.errors.full_messages
   end

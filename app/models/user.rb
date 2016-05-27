@@ -23,6 +23,11 @@ class User < ActiveRecord::Base
     has_role_for?(orga, Role::ORGA_ADMIN)
   end
 
+  def create_user_and_add_to_orga(email:, forename:, surname:, orga:)
+    user = User.create!(email: email, forename: forename, surname: surname, password: 'abc12345')
+    Role.create!(user: user, organization: orga, title: Role::ORGA_USER)
+  end
+
   private
 
   def has_role_for?(orga, role)
@@ -32,5 +37,6 @@ class User < ActiveRecord::Base
   def belongs_to_orga?(orga)
     organizations.pluck(:id).include?(orga.id)
   end
+
 
 end

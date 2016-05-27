@@ -21,7 +21,7 @@ class LocationTest < ActiveSupport::TestCase
     loc = Location.new(scope: Location::SCOPES.first)
     assert_nil loc.organization
 
-    orga = FactoryGirl.create(:organization)
+    orga = create(:organization)
     loc.organization = orga
     assert_equal orga.id, loc.organization_id
   end

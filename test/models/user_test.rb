@@ -2,7 +2,7 @@ require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
   setup do
-    @user = FactoryGirl.create(:valid_user)
+    @user = create(:user)
   end
 
   test 'user should have some basic attributes not nil' do
@@ -34,8 +34,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'user should have organizations' do
-    orga = FactoryGirl.create(:organization)
-    role = FactoryGirl.build(:role, organization: orga, user: @user)
+    orga = create(:organization)
+    role = build(:role, organization: orga, user: @user)
     @user.roles << role
     assert_equal 1, @user.organizations.size
     assert_equal orga, @user.organizations.first
@@ -46,7 +46,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'user should have role for organization' do
-    assert orga = FactoryGirl.create(:organization)
+    assert orga = create(:organization)
     assert @user.save
     role = Role.new(title: Role::ORGA_ADMIN, organization: orga, user: @user)
     assert role.save
@@ -58,7 +58,7 @@ class UserTest < ActiveSupport::TestCase
   test 'user should be owner of things' do
     market_entry = nil
     assert_difference('MarketEntry.count') do
-      market_entry = FactoryGirl.create(:market_entry)
+      market_entry = create(:market_entry)
     end
 
     assert_difference('@user.reload.market_entries.count') do
@@ -72,9 +72,27 @@ class UserTest < ActiveSupport::TestCase
 
   test 'user should be creator of things' do
     assert_difference('@user.created_market_entries.count') do
-      market_entry = FactoryGirl.create(:market_entry, creator: @user)
+      market_entry = create(:market_entry, creator: @user)
       assert_equal @user, market_entry.creator
     end
   end
+
+  context 'As admin' do
+    setup do
+      @user = create(:admin)
+    end
+
+    should 'I want to create a user to add it to orga' do
+      assert_difference('User.count') do
+        assert_difference('@user.organizations.first.users.count') do
+          @user.create_user_and_add_to_orga(email: 'team@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @user.organizations.first)
+        end
+      end
+
+      new_user = User.last
+      assert_equal(@user.organizations.first, new_user.organizations.first)
+    end
+  end
+
 
 end

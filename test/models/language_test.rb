@@ -26,7 +26,7 @@ class LanguageTest < ActiveSupport::TestCase
     @my_Lang.code = 'a'
     assert !@my_Lang.valid?
 
-    #@my_Lang = FactoryGirl.build(:language)
+    #@my_Lang = build(:language)
     #assert @my_Lang.valid?
   end
 
