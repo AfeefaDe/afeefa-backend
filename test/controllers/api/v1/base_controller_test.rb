@@ -3,6 +3,20 @@ require "#{Rails.root}/app/controllers/api/v1/exceptions"
 
 class Api::V1::BaseControllerTest < ActionController::TestCase
 
+  should 'fail for wrong host' do
+    ActionController::TestRequest.any_instance.stubs(:host).returns('dummy-host')
+    get :ping
+    assert_response 401
+    assert_equal 'wrong host: dummy-host, allowed: test.host', response.body
+  end
+
+  should 'fail for wrong protocol' do
+    ActionController::TestRequest.any_instance.stubs(:protocol).returns('https')
+    get :ping
+    assert_response 401
+    assert_equal 'wrong protocol: https, allowed: http', response.body
+  end
+
   should 'have a ping method' do
     Timecop.freeze(Time.now) do
       set_auth_header
@@ -56,9 +70,11 @@ class Api::V1::BaseControllerTest < ActionController::TestCase
 
       get :ping, token: ''
       assert_response 401
+      assert_equal 'auth failed', response.body
 
       get :ping, token: '0815'
       assert_response 401
+      assert_equal 'auth failed', response.body
 
       get :ping, token: Settings.api.token
       assert_response 200

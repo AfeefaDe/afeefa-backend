@@ -1,0 +1,5 @@
+api:
+  hosts:
+    - localhost
+  protocols:
+    - https

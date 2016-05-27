@@ -2,6 +2,8 @@ class Api::V1::BaseController < ApplicationController
 
   respond_to :json
 
+  before_action :ensure_host
+  before_action :ensure_protocol
   before_action :authenticate
   before_action :ensure_admin_secret, only: :test_airbrake
 
@@ -15,12 +17,33 @@ class Api::V1::BaseController < ApplicationController
 
   private
 
+  def ensure_host
+    if (host = request.host).in?(allowed_hosts = Settings.api.hosts)
+      true
+    else
+      render text: "wrong host: #{host}, allowed: #{allowed_hosts.join(', ')}", status: 401
+      false
+    end
+  end
+
+  def ensure_protocol
+    if (protocol = request.protocol.gsub(/:.*/, '')).in?(allowed_protocols = Settings.api.protocols)
+      true
+    else
+      render(
+          text: "wrong protocol: #{protocol}, allowed: #{allowed_protocols.join(', ')}",
+          status: 401
+      )
+      false
+    end
+  end
+
   def authenticate
     if Settings.api.allow_token_as_param && token = params[:token]
       if token == Settings.api.token
         true
       else
-        head status: 401
+        render text: 'auth failed', status: 401
         false
       end
     else
