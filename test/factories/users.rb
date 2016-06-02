@@ -21,10 +21,13 @@ FactoryGirl.define do
 
       email 'member@afeefa.de'
 
-      after(:build) do |user|
-        user.roles << Role.new(title: Role::ORGA_MEMBER, orga: build(:orga), user: user)
+      transient do
+        orga nil
       end
 
+      after(:build) do |member, evaluator|
+        member.roles << Role.new(title: Role::ORGA_USER, organization: evaluator.orga, user: member)
+      end
     end
 
     after(:create) do |user|

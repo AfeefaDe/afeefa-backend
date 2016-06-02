@@ -96,6 +96,7 @@ class UserTest < ActiveSupport::TestCase
     setup do
       @admin = create(:admin)
       @orga = @admin.orgas.first
+      @member = create(:member, orga: @admin.organizations.first)
     end
 
     should 'I want to create a new user to add it to my orga' do
@@ -104,6 +105,21 @@ class UserTest < ActiveSupport::TestCase
 
       @admin.create_user_and_add_to_orga(email: 'team@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @orga)
 
+    end
+
+    should 'I want to remove a user from an orga. user is in orga' do
+      assert_difference('@admin.organizations.first.users.count', -1) do
+        @admin.remove_user_from_orga(member: @member, orga: @admin.organizations.first)
+      end
+      refute(@member.orga_user?(@admin.organizations.first) or @member.orga_admin?(@admin.organizations.first))
+    end
+
+    should 'I want to remove a user from an orga. user is not in orga' do
+      assert_raise do
+        assert_no_difference('@admin.organizations.first.users.count') do
+          @admin.remove_user_from_orga(member: @user, orga: @admin.organizations.first)
+        end
+      end
     end
   end
 
