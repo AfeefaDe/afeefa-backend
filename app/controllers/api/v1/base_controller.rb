@@ -1,9 +1,13 @@
 class Api::V1::BaseController < ApplicationController
 
+  include DeviseTokenAuth::Concerns::SetUserByToken
+
   respond_to :json
 
-  before_action :authenticate
-  before_action :ensure_admin_secret, only: :test_airbrake
+  before_action :ensure_host
+  before_action :ensure_protocol
+  before_action :authenticate_api_v1_user!, except: %i(ping)
+  before_action :ensure_admin_secret, only: %i(test_airbrake)
 
   def ping
     render json: { pong: Time.now }
@@ -15,18 +19,27 @@ class Api::V1::BaseController < ApplicationController
 
   private
 
-  def authenticate
-    if Settings.api.allow_token_as_param && token = params[:token]
-      if token == Settings.api.token
-        true
-      else
-        head status: 401
-        false
-      end
+  def ensure_host
+    if (host = request.host).in?(allowed_hosts = Settings.api.hosts)
+      true
     else
-      authenticate_or_request_with_http_token do |token, _options|
-        token == Settings.api.token
-      end
+      render(
+          text: "wrong host: #{host}, allowed: #{allowed_hosts.join(', ')}",
+          status: 401
+      )
+      false
+    end
+  end
+
+  def ensure_protocol
+    if (protocol = request.protocol.gsub(/:.*/, '')).in?(allowed_protocols = Settings.api.protocols)
+      true
+    else
+      render(
+          text: "wrong protocol: #{protocol}, allowed: #{allowed_protocols.join(', ')}",
+          status: 401
+      )
+      false
     end
   end
 
@@ -37,6 +50,10 @@ class Api::V1::BaseController < ApplicationController
       head status: 403
       false
     end
+  end
+
+  def auth_params
+    params.permit(:email, :password)
   end
 
 end

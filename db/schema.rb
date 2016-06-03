@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160527115104) do
+ActiveRecord::Schema.define(version: 20160603080641) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "title"
@@ -50,9 +50,9 @@ ActiveRecord::Schema.define(version: 20160527115104) do
     t.string   "scope"
     t.string   "order"
     t.boolean  "displayed"
-    t.integer  "orga_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "organization_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "market_entries", force: :cascade do |t|
@@ -75,18 +75,18 @@ ActiveRecord::Schema.define(version: 20160527115104) do
     t.integer  "location_id"
   end
 
-  create_table "orga_category_relations", force: :cascade do |t|
+  create_table "organization_category_relations", force: :cascade do |t|
     t.integer  "category_id"
-    t.integer  "orga_id"
+    t.integer  "organization_id"
     t.boolean  "primary"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "orga_category_relations", ["category_id"], name: "index_orga_category_relations_on_category_id"
-  add_index "orga_category_relations", ["orga_id"], name: "index_orga_category_relations_on_orga_id"
+  add_index "organization_category_relations", ["category_id"], name: "index_organization_category_relations_on_category_id"
+  add_index "organization_category_relations", ["organization_id"], name: "index_organization_category_relations_on_organization_id"
 
-  create_table "orgas", force: :cascade do |t|
+  create_table "organizations", force: :cascade do |t|
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.string   "title"
@@ -124,22 +124,22 @@ ActiveRecord::Schema.define(version: 20160527115104) do
   create_table "roles", force: :cascade do |t|
     t.string   "title"
     t.integer  "user_id"
-    t.integer  "orga_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "organization_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "roles", ["orga_id"], name: "index_roles_on_orga_id"
+  add_index "roles", ["organization_id"], name: "index_roles_on_organization_id"
   add_index "roles", ["user_id"], name: "index_roles_on_user_id"
 
   create_table "tag_orga_relations", force: :cascade do |t|
-    t.integer  "orga_id"
+    t.integer  "organization_id"
     t.integer  "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "tag_orga_relations", ["orga_id"], name: "index_tag_orga_relations_on_orga_id"
+  add_index "tag_orga_relations", ["organization_id"], name: "index_tag_orga_relations_on_organization_id"
   add_index "tag_orga_relations", ["tag_id"], name: "index_tag_orga_relations_on_tag_id"
 
   create_table "tag_thing_relations", force: :cascade do |t|
@@ -172,18 +172,18 @@ ActiveRecord::Schema.define(version: 20160527115104) do
   add_index "thing_category_relations", ["category_id"], name: "index_thing_category_relations_on_category_id"
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                  default: "",      null: false
+    t.string   "encrypted_password",     default: "",      null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0,       null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
     t.string   "access_token"
     t.string   "forename"
     t.string   "surname"
@@ -192,9 +192,13 @@ ActiveRecord::Schema.define(version: 20160527115104) do
     t.datetime "registered_at"
     t.datetime "activated_at"
     t.datetime "enabled_at"
+    t.string   "provider",               default: "email", null: false
+    t.string   "uid",                    default: "",      null: false
+    t.text     "tokens"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
 
 end

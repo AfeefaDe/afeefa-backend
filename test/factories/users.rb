@@ -1,6 +1,8 @@
 FactoryGirl.define do
   factory :user do
-    email 'user@afeefa.de'
+    email 'test@afeefa.de'
+    forename 'Max'
+    surname 'Mustermann'
 
     #todo: remove required password from device
     password 'abc12346'

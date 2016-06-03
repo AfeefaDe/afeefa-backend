@@ -40,6 +40,8 @@ gem 'tzinfo-data'
 
 # user authentication
 gem 'devise' # see https://github.com/plataformatec/devise
+# api authentication stuff
+gem 'devise_token_auth'
 
 # roll and right management
 

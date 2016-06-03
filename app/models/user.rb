@@ -9,7 +9,8 @@ class User < ActiveRecord::Base
          :rememberable,
          :trackable,
          :validatable
-
+  include DeviseTokenAuth::Concerns::User
+  
   has_many :roles
   has_many :orgas, through: :roles
 
@@ -51,6 +52,5 @@ class User < ActiveRecord::Base
   def belongs_to_orga?(orga)
     orgas.pluck(:id).include?(orga.id)
   end
-
 
 end
