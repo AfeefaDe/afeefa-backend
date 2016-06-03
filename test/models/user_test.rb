@@ -77,10 +77,6 @@ class UserTest < ActiveSupport::TestCase
         assert_equal @user, market_entry.creator
       end
     end
-  end
-
-
-  context 'As user' do
 
     should 'I want to update my data to keep it up to date' do
       assert_no_difference('User.count') do

@@ -1,4 +1,8 @@
+#TODO: autoload
+require(Rails.root.join('app', 'models', 'exceptions', 'models_exceptions.rb'))
+
 class Orga < ActiveRecord::Base
+
   has_many :roles
   has_many :users, through: :roles
 
@@ -13,7 +17,9 @@ class Orga < ActiveRecord::Base
 
   def add_new_member(new_member:, admin:)
     if admin.orga_admin?(self)
-      unless new_member.orga_member?(self)
+      if new_member.orga_member?(self)
+        raise UserIsAlreadyMemberException
+      else
         Role.create!(user: new_member, orga: self, title: Role::ORGA_MEMBER)
       end
     else

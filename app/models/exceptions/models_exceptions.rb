@@ -1,0 +1,2 @@
+class UserIsAlreadyMemberException < StandardError
+end

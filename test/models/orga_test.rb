@@ -77,7 +77,9 @@ class OrgaTest < ActiveSupport::TestCase
 
       assert_no_difference('orga.users.count') do
         assert_no_difference('new_user.orgas.count') do
-          orga.add_new_member(new_member: new_user, admin: @user)
+          assert_raise UserIsAlreadyMemberException do
+            orga.add_new_member(new_member: new_user, admin: @user)
+          end
         end
       end
     end
