@@ -1,11 +1,13 @@
 class Api::V1::BaseController < ApplicationController
 
+  include DeviseTokenAuth::Concerns::SetUserByToken
+
   respond_to :json
 
   before_action :ensure_host
   before_action :ensure_protocol
-  before_action :authenticate, except: :ping
-  before_action :ensure_admin_secret, only: :test_airbrake
+  before_action :authenticate_api_v1_user!, except: %i(ping)
+  before_action :ensure_admin_secret, only: %i(test_airbrake)
 
   def ping
     render json: { pong: Time.now }
@@ -21,7 +23,10 @@ class Api::V1::BaseController < ApplicationController
     if (host = request.host).in?(allowed_hosts = Settings.api.hosts)
       true
     else
-      render text: "wrong host: #{host}, allowed: #{allowed_hosts.join(', ')}", status: 401
+      render(
+          text: "wrong host: #{host}, allowed: #{allowed_hosts.join(', ')}",
+          status: 401
+      )
       false
     end
   end
@@ -34,22 +39,6 @@ class Api::V1::BaseController < ApplicationController
           text: "wrong protocol: #{protocol}, allowed: #{allowed_protocols.join(', ')}",
           status: 401
       )
-      false
-    end
-  end
-
-  def authenticate
-    mail = auth_params[:email]
-    password = auth_params[:password]
-
-    if (user = User.find_by_email(mail)) &&
-        user.valid_password?(password) # TODO: && user.authenticate!
-      # TODO: set the current user here!
-      # User.current = user
-      true
-    else
-      warden.custom_failure!
-      render text: 'auth failed', status: 401
       false
     end
   end

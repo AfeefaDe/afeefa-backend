@@ -12,6 +12,9 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
+  # config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  # The e-mail address that mail will appear to be sent from
+  # If absent, mail is sent from "please-change-me-at-config-initializers-devise@example.com"
   config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
 
   # Configure the class responsible to send e-mails.
@@ -148,6 +151,13 @@ Devise.setup do |config|
   # one (and only one) @ exists in the given string. This is mainly
   # to give user feedback and not to assert the e-mail validity.
   # config.email_regexp = /\A[^@]+@[^@]+\z/
+  # DEPRECATION WARNING: [Devise] config.email_regexp will have a new default on Devise 4.1
+  # To keep the current behavior please set in your config/initializers/devise.rb the following:
+  # Devise.setup do |config|
+  #   config.email_regexp = /\A[^@\s]+@([^@\s]+\.)+[^@\W]+\z/
+  # end
+  # If you want to use the new default:
+  config.email_regexp = /\A[^@\s]+@[^@\s]+\z/
 
   # ==> Configuration for :timeoutable
   # The time you want to timeout the user session without activity. After this
@@ -228,6 +238,10 @@ Devise.setup do |config|
   #
   # The "*/*" below is required to match Internet Explorer requests.
   # config.navigational_formats = ['*/*', :html]
+  # If using rails-api, you may want to tell devise to not use ActionDispatch::Flash
+  # middleware b/c rails-api does not include it.
+  # See: http://stackoverflow.com/q/19600905/806956
+  config.navigational_formats = [:json]
 
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete

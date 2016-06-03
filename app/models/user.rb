@@ -9,7 +9,8 @@ class User < ActiveRecord::Base
          :rememberable,
          :trackable,
          :validatable
-
+  include DeviseTokenAuth::Concerns::User
+  
   has_many :roles
   has_many :organizations, through: :roles
 

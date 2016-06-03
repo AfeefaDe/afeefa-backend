@@ -59,8 +59,17 @@ Rails.application.routes.draw do
       get 'ping' => 'base#ping'
       get 'test_airbrake' => 'base#test_airbrake'
 
-      # resources :user
+      mount_devise_token_auth_for 'User', at: 'api/v1/users'
+      # resources :users
     end
+
+    # namespace :v2 do
+    #   get 'ping' => 'api#ping'
+    #   get 'test_airbrake' => 'api#test_airbrake'
+    #
+    #   mount_devise_token_auth_for 'User', at: 'api/v2/users'
+    #   # resources :users
+    # end
   end
 
 end

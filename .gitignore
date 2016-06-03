@@ -21,6 +21,7 @@
 
 # Coverage
 /coverage
+/test/coverage
 
 # Routes Gem
 /.routes
