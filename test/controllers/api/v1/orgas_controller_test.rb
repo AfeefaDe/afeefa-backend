@@ -4,10 +4,10 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
   context 'As Admin' do
     setup do
-      user = create(:admin)
-      stub_current_user(user: user)
+      @admin = create(:admin)
+      stub_current_user(user: @admin)
 
-      @orga = user.orgas.first
+      @orga = @admin.orgas.first
       @user_json = {forename: 'Rudi', surname: 'Dutschke', email: 'bob@afeefa.de'}
     end
 
@@ -18,6 +18,35 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       end
 
       assert_equal @user_json[:email], @orga.users.last.email
+    end
+
+    context 'interacting with a member' do
+      setup do
+        @member = create(:member, orga: @admin.orgas.first)
+        @user = create(:user)
+      end
+
+      should 'try to remove user from orga' do
+        @admin.expects(:remove_user_from_orga).once
+        delete :remove_member, id: @orga.id, user_id: @member.id
+      end
+
+      should 'remove user from orga' do
+        delete :remove_member, id: @orga.id, user_id: @member.id
+        assert_response :ok
+      end
+
+      should 'remove user from orga, am not admin' do
+        stub_current_user(user: @user)
+
+        delete :remove_member, id: @orga.id, user_id: @member.id
+        assert_response :forbidden
+      end
+
+      should 'remove user from orga, user not in orga' do
+        delete :remove_member, id: @orga.id, user_id: @user.id
+        assert_response :not_found
+      end
     end
 
     should 'I must not create a new member in a not existing orga' do
@@ -41,6 +70,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :unprocessable_entity
       end
     end
+  end
 
   end
 

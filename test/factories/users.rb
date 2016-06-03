@@ -26,7 +26,7 @@ FactoryGirl.define do
       end
 
       after(:build) do |member, evaluator|
-        member.roles << Role.new(title: Role::ORGA_USER, organization: evaluator.orga, user: member)
+        member.roles << Role.new(title: Role::ORGA_MEMBER, orga: evaluator.orga, user: member)
       end
     end
 
