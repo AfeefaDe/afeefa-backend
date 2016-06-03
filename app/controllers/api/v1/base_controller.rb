@@ -52,8 +52,4 @@ class Api::V1::BaseController < ApplicationController
     end
   end
 
-  def auth_params
-    params.permit(:email, :password)
-  end
-
 end

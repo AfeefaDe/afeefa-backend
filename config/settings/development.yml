@@ -1,0 +1,6 @@
+api:
+  hosts:
+    - localhost
+  protocols:
+    - http
+  admin_secret: '0815'

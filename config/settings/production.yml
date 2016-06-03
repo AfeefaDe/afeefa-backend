@@ -3,3 +3,4 @@ api:
     - localhost
   protocols:
     - https
+  admin_secret: '0815'
