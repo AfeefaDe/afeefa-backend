@@ -70,14 +70,4 @@ class Api::V1::BaseControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  private
-
-  def stub_current_user(user: create(:user))
-    @controller.class.any_instance.stubs(:set_user_by_token).returns(user)
-  end
-
-  def unstub_current_user
-    @controller.class.any_instance.unstub(:set_user_by_token)
-  end
-
 end

@@ -1,11 +1,22 @@
 class Api::V1::OrgasController < Api::V1::BaseController
 
-  before_action :create_member_params, only: :create_member
 
   def create_member
+    begin
+      current_api_v1_user.create_user_and_add_to_orga(
+          orga: Orga.find(params[:id]),
+          forename: user_params[:forename],
+          surname: user_params[:surname],
+          email: user_params[:email]
+      )
 
-    head status: :created
+      head status: :created
+
+    rescue CanCan::AccessDenied
+      head status: :unauthorized
+    end
   end
+
 
   def add_member
 
@@ -13,8 +24,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   private
 
-  def create_member_params
-    params.require(:id)
-    params.require(:user).permit!(:forename, :surname, :email)
+  def user_params
+    params.require(:user).permit(:forename, :surname, :email)
   end
 end

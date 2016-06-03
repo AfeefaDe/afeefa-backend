@@ -27,9 +27,9 @@ class User < ActiveRecord::Base
   def create_user_and_add_to_orga(email:, forename:, surname:, orga:)
     if orga_admin?(orga)
       new_user = User.create!(email: email, forename: forename, surname: surname, password: 'abc12345')
-      orga.add_new_member(new_user, self)
+      orga.add_new_member(new_member: new_user, admin: self)
     else
-      raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, self)
+      raise CanCanCan::AccessDenied.new('user is not admin of this orga', __method__, self)
     end
   end
 

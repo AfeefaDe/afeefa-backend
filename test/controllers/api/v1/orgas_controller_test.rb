@@ -4,10 +4,11 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
   context 'As orga' do
     setup do
-      Settings.api.stubs(:allow_token_as_param).returns(true)
+      user = create(:admin)
+      stub_current_user(user: user)
 
-      @orga = create(:orga)
-      @user_json = {user: {forename: 'Rudi', surname: 'Dutschke', email: 'bob@afeefa.de'}}
+      @orga = user.orgas.first
+      @user_json = {forename: 'Rudi', surname: 'Dutschke', email: 'bob@afeefa.de'}
     end
 
     should 'create new member in orga' do
@@ -16,7 +17,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :created
       end
 
-      assert_equal @user_json[user][email], @orga.users.first
+      assert_equal @user_json[:email], @orga.users.last.email
 
     end
 

@@ -50,9 +50,9 @@ ActiveRecord::Schema.define(version: 20160603080641) do
     t.string   "scope"
     t.string   "order"
     t.boolean  "displayed"
-    t.integer  "organization_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "orga_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "market_entries", force: :cascade do |t|
@@ -75,18 +75,18 @@ ActiveRecord::Schema.define(version: 20160603080641) do
     t.integer  "location_id"
   end
 
-  create_table "organization_category_relations", force: :cascade do |t|
+  create_table "orga_category_relations", force: :cascade do |t|
     t.integer  "category_id"
-    t.integer  "organization_id"
+    t.integer  "orga_id"
     t.boolean  "primary"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
-  add_index "organization_category_relations", ["category_id"], name: "index_organization_category_relations_on_category_id"
-  add_index "organization_category_relations", ["organization_id"], name: "index_organization_category_relations_on_organization_id"
+  add_index "orga_category_relations", ["category_id"], name: "index_orga_category_relations_on_category_id"
+  add_index "orga_category_relations", ["orga_id"], name: "index_orga_category_relations_on_orga_id"
 
-  create_table "organizations", force: :cascade do |t|
+  create_table "orgas", force: :cascade do |t|
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.string   "title"
@@ -124,22 +124,22 @@ ActiveRecord::Schema.define(version: 20160603080641) do
   create_table "roles", force: :cascade do |t|
     t.string   "title"
     t.integer  "user_id"
-    t.integer  "organization_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "orga_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "roles", ["organization_id"], name: "index_roles_on_organization_id"
+  add_index "roles", ["orga_id"], name: "index_roles_on_orga_id"
   add_index "roles", ["user_id"], name: "index_roles_on_user_id"
 
   create_table "tag_orga_relations", force: :cascade do |t|
-    t.integer  "organization_id"
+    t.integer  "orga_id"
     t.integer  "tag_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "tag_orga_relations", ["organization_id"], name: "index_tag_orga_relations_on_organization_id"
+  add_index "tag_orga_relations", ["orga_id"], name: "index_tag_orga_relations_on_orga_id"
   add_index "tag_orga_relations", ["tag_id"], name: "index_tag_orga_relations_on_tag_id"
 
   create_table "tag_thing_relations", force: :cascade do |t|
