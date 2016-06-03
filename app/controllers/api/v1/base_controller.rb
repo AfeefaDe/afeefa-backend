@@ -14,7 +14,7 @@ class Api::V1::BaseController < ApplicationController
   end
 
   def test_airbrake
-    raise Api::V1::TestAirbrakeException.new('api request for testing airbrake triggered')
+    raise Api::TestAirbrakeException.new('api request for testing airbrake triggered')
   end
 
   private

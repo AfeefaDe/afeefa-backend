@@ -1,11 +1,11 @@
 class Role < ActiveRecord::Base
   belongs_to :user
-  belongs_to :organization
+  belongs_to :orga
 
   ORGA_ADMIN = 'orga_admin'
-  ORGA_USER = 'orga_user'
-  ROLES = [ORGA_ADMIN, ORGA_USER]
+  ORGA_MEMBER = 'orga_user'
+  ROLES = [ORGA_ADMIN, ORGA_MEMBER]
 
   validates_inclusion_of :title, within: ROLES
-  validates_presence_of :user, :organization
+  validates_presence_of :user, :orga
 end

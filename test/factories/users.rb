@@ -13,10 +13,23 @@ FactoryGirl.define do
 
       after(:build) do |user|
         #todo: make easier... if possible
-        user.roles << Role.new(title: Role::ORGA_ADMIN, organization: build(:organization), user: user)
+        user.roles << Role.new(title: Role::ORGA_ADMIN, orga: build(:orga), user: user)
       end
     end
 
-  end
+    factory :member do
 
+      email 'member@afeefa.de'
+
+      after(:build) do |user|
+        user.roles << Role.new(title: Role::ORGA_MEMBER, orga: build(:orga), user: user)
+      end
+
+    end
+
+    after(:create) do |user|
+      user.orgas.map(&:save!)
+    end
+
+  end
 end

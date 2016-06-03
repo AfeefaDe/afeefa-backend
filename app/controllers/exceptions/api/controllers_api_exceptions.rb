@@ -1,4 +1,4 @@
-module Api::V1
+module Api
 
   class TestAirbrakeException < StandardError
   end

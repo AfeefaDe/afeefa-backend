@@ -19,11 +19,11 @@ class LocationTest < ActiveSupport::TestCase
 
   test 'should belongs_to orga' do
     loc = Location.new(scope: Location::SCOPES.first)
-    assert_nil loc.organization
+    assert_nil loc.orga
 
-    orga = create(:organization)
-    loc.organization = orga
-    assert_equal orga.id, loc.organization_id
+    orga = create(:orga)
+    loc.orga = orga
+    assert_equal orga.id, loc.orga_id
   end
 
 end

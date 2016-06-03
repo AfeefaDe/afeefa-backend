@@ -60,7 +60,14 @@ Rails.application.routes.draw do
       get 'test_airbrake' => 'base#test_airbrake'
 
       mount_devise_token_auth_for 'User', at: 'api/v1/users'
+
       # resources :users
+      resources :orgas do
+        member do
+          post :create_member, path: 'users'
+          put :add_member, path: 'users/:user_id'
+        end
+      end
     end
 
     # namespace :v2 do

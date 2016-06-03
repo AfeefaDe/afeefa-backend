@@ -2,7 +2,7 @@ FactoryGirl.define do
 
   factory :role do
 
-    title { Role::ROLES.first }
+    title { Role::ORGA_MEMBER }
 
   end
 
