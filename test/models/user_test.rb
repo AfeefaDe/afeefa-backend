@@ -78,6 +78,8 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+  context 'As user' do
+
     should 'I want to update my data to keep it up to date' do
       assert_no_difference('User.count') do
         new_forename = @user.forename+'123'
@@ -98,6 +100,23 @@ class UserTest < ActiveSupport::TestCase
       @orga = @admin.orgas.first
       @member = create(:member, orga: @admin.organizations.first)
     end
+
+    should 'I want to create a user to add it to orga' do
+      assert_difference('User.count') do
+        assert_difference('@admin.organizations.first.users.count') do
+          @admin.create_user_and_add_to_orga(email: 'team@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @admin.organizations.first)
+        end
+      end
+
+      new_user = User.last
+      assert_equal(@admin.organizations.first, new_user.organizations.first)
+    end
+
+
+    context 'As admin, interact with orga' do
+      setup do
+        @member = create(:member, orga: @admin.organizations.first)
+      end
 
     should 'I want to create a new user to add it to my orga' do
       @orga.expects(:add_new_member).once

@@ -34,14 +34,16 @@ class User < ActiveRecord::Base
   end
 
   def leave_orga(orga)
-    if not belongs_to_orga?(orga)
-      raise "user not in orga!"
+    unless belongs_to_orga?(orga)
+      raise ActiveRecord::RecordNotFound.new('user not in orga!')
     end
     roles.where(organization: orga, user: self).delete_all
   end
 
   def remove_user_from_orga(member:, orga:)
-    #TODO: check permissions
+    unless orga_admin?(orga)
+      raise CanCanCan::AccessDenied.new('no permission to remove user')
+    end
     member.leave_orga(orga)
   end
 
