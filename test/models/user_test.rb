@@ -107,11 +107,19 @@ class UserTest < ActiveSupport::TestCase
 
     end
 
+    should 'I want to remove a user from an orga. i am not admin' do
+      assert_raise do
+        assert_no_difference('@admin.organizations.first.users.count') do
+          @user.remove_user_from_orga(member: @member, orga: @admin.organizations.first)
+        end
+      end
+    end
+
     should 'I want to remove a user from an orga. user is in orga' do
       assert_difference('@admin.organizations.first.users.count', -1) do
         @admin.remove_user_from_orga(member: @member, orga: @admin.organizations.first)
       end
-      refute(@member.orga_user?(@admin.organizations.first) or @member.orga_admin?(@admin.organizations.first))
+      refute(@member.orga_user?(@admin.organizations.first) || @member.orga_admin?(@admin.organizations.first))
     end
 
     should 'I want to remove a user from an orga. user is not in orga' do
