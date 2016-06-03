@@ -60,10 +60,10 @@ Rails.application.routes.draw do
       get 'test_airbrake' => 'base#test_airbrake'
 
       # resources :users
-      resource :orgas do
+      resources :orgas do
         member do
           post :create_member, path: 'users'
-          put :add_member, path: 'users'
+          put :add_member, path: 'users/:user_id'
         end
       end
     end
