@@ -39,12 +39,12 @@ set :env, 'production'
 set :rails_env, fetch(:env)
 
 # Default value for keep_releases is 5
-# set :keep_releases, 5
+set :keep_releases, 5
 
 # Defaults to nil (no asset cleanup is performed)
 # If you use Rails 4+ and you'd like to clean up old assets after each deploy,
 # set this to the number of versions to keep
-# set :keep_assets, 2
+set :keep_assets, 2
 
 namespace :deploy do
 
