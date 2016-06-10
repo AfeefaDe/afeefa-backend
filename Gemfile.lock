@@ -136,6 +136,7 @@ GEM
     mocha (1.1.0)
       metaclass (~> 0.0.1)
     multi_json (1.12.1)
+    mysql2 (0.3.21)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (3.1.1)
@@ -244,6 +245,7 @@ DEPENDENCIES
   minitest-rails-capybara
   minitest-reporters
   mocha
+  mysql2 (~> 0.3.18)
   rails (~> 4.2)
   rails_best_practices
   sdoc (~> 0.4.0)
