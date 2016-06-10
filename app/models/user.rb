@@ -33,16 +33,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  class << self
-    def current
-      @user
-    end
-
-    def current=(user)
-      @user = user
-    end
-  end
-
   def leave_orga(orga)
     unless belongs_to_orga?(orga)
       raise ActiveRecord::RecordNotFound.new('user not in orga!')

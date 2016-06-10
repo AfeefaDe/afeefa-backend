@@ -72,6 +72,4 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     end
   end
 
-  end
-
 end
