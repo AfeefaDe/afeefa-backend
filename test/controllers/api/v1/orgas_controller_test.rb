@@ -47,6 +47,28 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         delete :remove_member, id: @orga.id, user_id: @user.id
         assert_response :not_found
       end
+
+      should 'I want to promote a member to admin, user is not in orga' do
+        put :promote_member, id: @orga.id, user_id: @user.id
+        assert_response :not_found
+      end
+
+      should 'I want to promote a member to admin, am not admin' do
+        stub_current_user(user: @user)
+
+        put :promote_member, id: @orga.id, user_id: @member.id
+        assert_response :forbidden
+      end
+
+      should 'I want to promote a member to admin, a)' do
+        put :promote_member, id: @orga.id, user_id: @member.id
+        assert_response :ok
+      end
+
+      should 'I want to promote a member to admin, b)' do
+        @admin.expects(:promote_member_to_admin).once
+        put :promote_member, id: @orga.id, user_id: @member.id
+      end
     end
 
     should 'I must not create a new member in a not existing orga' do

@@ -47,6 +47,18 @@ class User < ActiveRecord::Base
     member.leave_orga(orga)
   end
 
+  def promote_member_to_admin(member: member, orga: orga)
+    unless orga_admin?(orga)
+      raise CanCan::AccessDenied.new('no permission to promote user', __method__, self)
+    end
+
+    role = Role.find_by(orga: orga, user: member)
+    if role.nil?
+      raise ActiveRecord::RecordNotFound.new('user not in orga!')
+    end
+    role.update(title: Role::ORGA_ADMIN)
+  end
+
   class << self
     def current
       @user

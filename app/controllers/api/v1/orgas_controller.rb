@@ -1,7 +1,7 @@
 class Api::V1::OrgasController < Api::V1::BaseController
 
   before_action :set_orga
-  before_action :set_user, only: [:remove_member]
+  before_action :set_user, only: [:remove_member, :promote_member]
 
   def create_member
     begin
@@ -29,6 +29,18 @@ class Api::V1::OrgasController < Api::V1::BaseController
   def remove_member
     begin
       current_api_v1_user.remove_user_from_orga(member: @user, orga: @orga)
+      head status: :ok
+
+    rescue CanCan::AccessDenied
+      head status: :forbidden
+    rescue ActiveRecord::RecordNotFound
+      head status: :not_found
+    end
+  end
+
+  def promote_member
+    begin
+      current_api_v1_user.promote_member_to_admin(member: @user, orga: @orga)
       head status: :ok
 
     rescue CanCan::AccessDenied

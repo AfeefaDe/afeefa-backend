@@ -133,6 +133,25 @@ class UserTest < ActiveSupport::TestCase
           end
         end
       end
+
+      should 'I want to promote a member to admin, user not in orga' do
+        assert_raise ActiveRecord::RecordNotFound do
+          @admin.promote_member_to_admin(member: @user, orga: @orga)
+        end
+      end
+
+      should 'I want to promote a member to admin, i am not admin' do
+        assert_raise CanCan::AccessDenied do
+          @user.promote_member_to_admin(member: @member, orga: @orga)
+        end
+      end
+
+      should 'I want to promote a member to admin' do
+        assert_no_difference('@orga.roles.count') do
+          @admin.promote_member_to_admin(member: @member, orga: @orga)
+          assert_equal Role.find_by(orga: @orga, user: @member).title, Role::ORGA_ADMIN
+        end
+      end
     end
   end
 
