@@ -107,29 +107,29 @@ class UserTest < ActiveSupport::TestCase
 
     context 'interacting with a member' do
       setup do
-        @member = create(:member, orga: @admin.orgas.first)
+        @member = create(:member, orga: @orga)
         @user = create(:user)
       end
 
       should 'I want to remove a user from an orga. i am not admin' do
         assert_raise CanCan::AccessDenied do
-          assert_no_difference('@admin.orgas.first.users.count') do
-            @user.remove_user_from_orga(member: @member, orga: @admin.orgas.first)
+          assert_no_difference('@orga.users.count') do
+            @user.remove_user_from_orga(member: @member, orga: @orga)
           end
         end
       end
 
       should 'I want to remove a user from an orga. user is in orga' do
-        assert_difference('@admin.orgas.first.users.count', -1) do
-          @admin.remove_user_from_orga(member: @member, orga: @admin.orgas.first)
+        assert_difference('@orga.users.count', -1) do
+          @admin.remove_user_from_orga(member: @member, orga: @orga)
         end
-        refute(@member.orga_member?(@admin.orgas.first) || @member.orga_admin?(@admin.orgas.first))
+        refute(@member.orga_member?(@orga) || @member.orga_admin?(@orga))
       end
 
       should 'I want to remove a user from an orga. user is not in orga' do
         assert_raise ActiveRecord::RecordNotFound do
-          assert_no_difference('@admin.orgas.first.users.count') do
-            @admin.remove_user_from_orga(member: @user, orga: @admin.orgas.first)
+          assert_no_difference('@orga.roles.count') do
+            @admin.remove_user_from_orga(member: @user, orga: @orga)
           end
         end
       end
