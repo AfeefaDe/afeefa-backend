@@ -69,6 +69,28 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         @admin.expects(:promote_member_to_admin).once
         put :promote_member, id: @orga.id, user_id: @member.id
       end
+
+      should 'I want to demote an admin to member, user is not in orga' do
+        put :demote_admin, id: @orga.id, user_id: @user.id
+        assert_response :not_found
+      end
+
+      should 'I want to demote an admin to member, am not admin' do
+        stub_current_user(user: @user)
+
+        put :demote_admin, id: @orga.id, user_id: @member.id
+        assert_response :forbidden
+      end
+
+      should 'I want to demote an admin to member, a)' do
+        put :demote_admin, id: @orga.id, user_id: @member.id
+        assert_response :ok
+      end
+
+      should 'I want to demote an admin to member, b)' do
+        @admin.expects(:demote_admin_to_member).once
+        put :demote_admin, id: @orga.id, user_id: @member.id
+      end
     end
 
     should 'I must not create a new member in a not existing orga' do

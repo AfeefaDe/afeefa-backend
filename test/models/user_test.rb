@@ -152,6 +152,25 @@ class UserTest < ActiveSupport::TestCase
           assert_equal Role.find_by(orga: @orga, user: @member).title, Role::ORGA_ADMIN
         end
       end
+
+      should 'I want to demote an admin to member, user not in orga' do
+        assert_raise ActiveRecord::RecordNotFound do
+          @admin.demote_admin_to_member(member: @user, orga: @orga)
+        end
+      end
+
+      should 'I want to demote and admin to member, i am not admin' do
+        assert_raise CanCan::AccessDenied do
+          @user.demote_admin_to_member(member: @member, orga: @orga)
+        end
+      end
+
+      should 'I want to demote an admin to member' do
+        assert_no_difference('@orga.roles.count') do
+          @admin.demote_admin_to_member(member: @member, orga: @orga)
+          assert_equal Role.find_by(orga: @orga, user: @member).title, Role::ORGA_MEMBER
+        end
+      end
     end
   end
 
