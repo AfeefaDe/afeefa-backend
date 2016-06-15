@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         member do
           post :create_member, path: 'users'
           put :add_member, path: 'users/:user_id'
+          delete :remove_member, path: 'users/:user_id'
         end
       end
     end

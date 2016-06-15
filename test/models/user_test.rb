@@ -103,13 +103,42 @@ class UserTest < ActiveSupport::TestCase
       User.expects(:create!).once
 
       @admin.create_user_and_add_to_orga(email: 'team@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @orga)
+    end
 
+    context 'interacting with a member' do
+      setup do
+        @member = create(:member, orga: @admin.orgas.first)
+        @user = create(:user)
+      end
+
+      should 'I want to remove a user from an orga. i am not admin' do
+        assert_raise CanCan::AccessDenied do
+          assert_no_difference('@admin.orgas.first.users.count') do
+            @user.remove_user_from_orga(member: @member, orga: @admin.orgas.first)
+          end
+        end
+      end
+
+      should 'I want to remove a user from an orga. user is in orga' do
+        assert_difference('@admin.orgas.first.users.count', -1) do
+          @admin.remove_user_from_orga(member: @member, orga: @admin.orgas.first)
+        end
+        refute(@member.orga_member?(@admin.orgas.first) || @member.orga_admin?(@admin.orgas.first))
+      end
+
+      should 'I want to remove a user from an orga. user is not in orga' do
+        assert_raise ActiveRecord::RecordNotFound do
+          assert_no_difference('@admin.orgas.first.users.count') do
+            @admin.remove_user_from_orga(member: @user, orga: @admin.orgas.first)
+          end
+        end
+      end
     end
   end
 
   context 'As member' do
     setup do
-      @member = create(:member)
+      @member = create(:member, orga: build(:orga))
       @orga = @member.orgas.first
     end
     should 'I must not add a new user to an orga' do
@@ -122,7 +151,6 @@ class UserTest < ActiveSupport::TestCase
         end
       end
     end
-
   end
 
 end

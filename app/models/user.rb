@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
          :trackable,
          :validatable
   include DeviseTokenAuth::Concerns::User
-  
+
   has_many :roles
   has_many :orgas, through: :roles
 
@@ -31,6 +31,20 @@ class User < ActiveRecord::Base
     else
       raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, self)
     end
+  end
+
+  def leave_orga(orga)
+    unless belongs_to_orga?(orga)
+      raise ActiveRecord::RecordNotFound.new('user not in orga!')
+    end
+    roles.where(orga: orga, user: self).delete_all
+  end
+
+  def remove_user_from_orga(member: member, orga: orga)
+    unless orga_admin?(orga)
+      raise CanCan::AccessDenied.new('no permission to remove user', __method__, self)
+    end
+    member.leave_orga(orga)
   end
 
   class << self
