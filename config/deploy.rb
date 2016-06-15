@@ -51,9 +51,9 @@ namespace :deploy do
   after :restart, :clear_cache do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
       # Here we can do anything such as:
-      # within release_path do
-      #   execute :rake, 'cache:clear'
-      # end
+      within release_path do
+        execute 'svc -du ~/service/api' # maybe we can use -h instead of -du
+      end
     end
   end
 
