@@ -31,7 +31,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'tzinfo-data'
 
 # Use Unicorn as the app server
-# gem 'unicorn'
+gem 'unicorn'
 
 ##########################
 # project relevant gems #
