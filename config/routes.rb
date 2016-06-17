@@ -77,6 +77,7 @@ Rails.application.routes.draw do
 
       resources :orgas, concerns: :json_api do
         member do
+          get :list_members, path: 'users'
           post :create_member, path: 'users'
           put :add_member, path: 'users/:user_id'
           delete :remove_member, path: 'users/:user_id'
