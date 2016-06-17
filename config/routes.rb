@@ -61,7 +61,13 @@ Rails.application.routes.draw do
 
       mount_devise_token_auth_for 'User', at: 'api/v1/users'
 
-      # resources :users
+      resources :users, only: [] do
+        member do
+          get :list_orgas, path: 'orgas'
+        end
+      end
+
+
       resources :orgas do
         member do
           post :create_member, path: 'users'
