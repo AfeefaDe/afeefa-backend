@@ -58,17 +58,13 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def list_members
-    # unless current_api_v1_user.belongs_to_orga?(@orga)
-    #   raise CanCan::AccessDenied
-    # end
-
-    members = Array.new
-    roles = Role.where(orga: @orga).find_each do |role|
-      members.push(User.find(role.user_id))
+    if current_api_v1_user.belongs_to_orga?(@orga)
+      data = {:type => 'orgas', :id => @orga.id.to_s, :attributes => @orga.users.pluck(:email, :surname, :forename)}
+      json = {:data => data}
+      render json: json
+    else # || current_api_v1_user.nil?
+      head status :forbidden
     end
-    data = { :type => 'orgas', :id => @orga.id.to_s, :attributes => members }
-    json = { :data => data}.to_json
-    render json: json
   end
 
   private
