@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   def set_access_control_headers
     if Rails.env.development?
-      headers['Access-Control-Allow-Origin'] = 'http://localhost:3000/'
+      headers['Access-Control-Allow-Origin'] = '*'
       headers['Access-Control-Request-Method']= '*'
     end
   end
