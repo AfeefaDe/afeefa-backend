@@ -7,9 +7,7 @@ class Api::V1::UsersController < Api::V1::BaseController
     roles = Role.where(user: @user).find_each do |role|
       orgas.push(Orga.find(role.orga_id))
     end
-    data = { :type => 'users', :id => @user.id.to_s, :attributes => orgas }
-    json = { :data => data}.to_json
-    render json: json
+    render json: orgas
   end
 
   def set_user
