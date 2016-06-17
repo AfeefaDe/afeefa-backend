@@ -5,10 +5,10 @@ class Api::V1::UsersController < Api::V1::BaseController
   def list_orgas
     orgas = Array.new
     roles = Role.where(user: @user).find_each do |role|
-      orgas.push(Orga.find(role.orga_id))
+      orga = {:title => Orga.find(role.orga_id).title}
+      orgas.push({ :type => 'orgas', :id => role.orga_id.to_s, :attributes => orga})
     end
-    data = { :type => 'users', :id => @user.id.to_s, :attributes => orgas }
-    json = { :data => data}.to_json
+    json = { :data => orgas}.to_json
     render json: json
   end
 
