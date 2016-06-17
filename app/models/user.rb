@@ -65,14 +65,14 @@ class User < ActiveRecord::Base
     end
   end
 
+  def belongs_to_orga?(orga)
+    orgas.pluck(:id).include?(orga.id)
+  end
+
   private
 
   def has_role_for?(orga, role)
     belongs_to_orga?(orga) ? roles.where(orga_id: orga.id).first.try(:title) == role : false
-  end
-
-  def belongs_to_orga?(orga)
-    orgas.pluck(:id).include?(orga.id)
   end
 
   def update_role_for_member(member:, orga:, role:)

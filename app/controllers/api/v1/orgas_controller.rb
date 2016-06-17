@@ -62,6 +62,18 @@ class Api::V1::OrgasController < Api::V1::BaseController
     end
   end
 
+  def list_members
+    # unless current_api_v1_user.belongs_to_orga?(@orga)
+    #   raise CanCan::AccessDenied
+    # end
+
+    members = Array.new
+    roles = Role.where(orga: @orga).find_each do |role|
+      members.push(User.find(role.user_id))
+    end
+    render json: members
+  end
+
   private
 
   def user_params
