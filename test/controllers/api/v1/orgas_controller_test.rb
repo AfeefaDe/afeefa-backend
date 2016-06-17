@@ -116,4 +116,9 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     end
   end
 
+  context 'As member' do
+    should 'I want a list of all members in the corresponding orga' do
+      assert_routing 'api/v1/orgas/1/users', controller: 'api/v1/orgas', action: 'list_members', id: '1'
+    end
+  end
 end
