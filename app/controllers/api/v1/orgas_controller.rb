@@ -66,7 +66,9 @@ class Api::V1::OrgasController < Api::V1::BaseController
     roles = Role.where(orga: @orga).find_each do |role|
       members.push(User.find(role.user_id))
     end
-    render json: members
+    data = { :type => 'orgas', :id => @orga.id.to_s, :attributes => members }
+    json = { :data => data}.to_json
+    render json: json
   end
 
   private
