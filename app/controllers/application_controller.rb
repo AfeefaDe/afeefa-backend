@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   after_action :set_access_control_headers
 
   def set_access_control_headers
+    #todo clean up urls and remove wildcard
     if Rails.env.development?
       headers['Access-Control-Allow-Origin'] = '*'
       headers['Access-Control-Request-Method']= '*'
