@@ -5,9 +5,6 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-<<<<<<< Updated upstream
-=======
-
 user1 = User.create(email: 'rudi@afeefa.de', forename: 'Rudi', surname: 'Dutschke', password: 'password1')
 user2 = User.create(email: 'steve@afeefa.de', forename: 'Steve', surname: 'Reinke', password: 'password1')
 user3 = User.create(email: 'joschka@afeefa.de', forename: 'Joschka', surname: 'Heinrich', password: 'password2')
@@ -34,4 +31,3 @@ Role.create(user: user4, orga: orga3, title: Role::ORGA_ADMIN)
 Role.create(user: user1, orga: orga3, title: Role::ORGA_MEMBER)
 Role.create(user: user3, orga: orga3, title: Role::ORGA_MEMBER)
 Role.create(user: user5, orga: orga3, title: Role::ORGA_MEMBER)
->>>>>>> Stashed changes
