@@ -3,6 +3,10 @@ class Api::V1::OrgasController < Api::V1::BaseController
   before_action :set_orga
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin]
 
+  def jsonapi_model_class
+    Orga
+  end
+
   def create_member
     begin
       current_api_v1_user.create_user_and_add_to_orga(
