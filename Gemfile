@@ -56,6 +56,9 @@ gem 'cancancan', '~> 1.10' # see https://github.com/CanCanCommunity/cancancan
 # extract configuration to settings
 gem 'config'
 
+# json api spec
+gem 'jsonapi_for_rails'
+
 # redmine integration
 gem 'airbrake', '~> 5.3'
 
@@ -63,6 +66,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   # for debug
   gem 'byebug'
+  gem 'better_errors'
 
   # test framework
   gem 'minitest-rails'

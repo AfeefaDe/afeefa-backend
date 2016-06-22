@@ -46,6 +46,10 @@ GEM
     arel (6.0.3)
     bcrypt (3.1.11)
     bcrypt (3.1.11-x86-mingw32)
+    better_errors (2.1.1)
+      coderay (>= 1.0.0)
+      erubis (>= 2.6.6)
+      rack (>= 0.9.0)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
@@ -76,6 +80,7 @@ GEM
       xpath (~> 2.0)
     code_analyzer (0.4.5)
       sexp_processor
+    coderay (1.1.0)
     concurrent-ruby (1.0.2)
     config (1.2.1)
       activesupport (>= 3.0)
@@ -105,6 +110,8 @@ GEM
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
     json (1.8.3)
+    jsonapi_for_rails (0.2.1)
+      rails (>= 4.0.0, < 5.1)
     kgio (2.10.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
@@ -245,6 +252,7 @@ PLATFORMS
 DEPENDENCIES
   airbrake (~> 5.3)
   bcrypt (~> 3.1.7)
+  better_errors
   bullet
   byebug
   cancancan (~> 1.10)
@@ -255,6 +263,7 @@ DEPENDENCIES
   devise_token_auth
   factory_girl_rails
   jbuilder (~> 2.0)
+  jsonapi_for_rails
   minitest-rails
   minitest-rails-capybara
   minitest-reporters
@@ -271,3 +280,6 @@ DEPENDENCIES
   tzinfo-data
   unicorn
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.12.5

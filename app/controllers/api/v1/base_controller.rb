@@ -1,4 +1,5 @@
 class Api::V1::BaseController < ApplicationController
+  acts_as_jsonapi_resources
 
   include DeviseTokenAuth::Concerns::SetUserByToken
 
@@ -8,6 +9,21 @@ class Api::V1::BaseController < ApplicationController
   before_action :ensure_protocol
   before_action :authenticate_api_v1_user!, except: %i(ping)
   before_action :ensure_admin_secret, only: %i(test_airbrake)
+
+  before_action :permit_read, only: [
+      :index,
+      :show,
+      :relationship_show
+  ]
+
+  before_action :permit_write, only: [
+      :create,
+      :update,
+      :destroy,
+      :relationship_update,
+      :relationship_add,
+      :relationship_remove
+  ]
 
   def ping
     render json: { pong: Time.now }
@@ -50,6 +66,16 @@ class Api::V1::BaseController < ApplicationController
       head status: 403
       false
     end
+  end
+
+  def permit_read
+    # TODO: handling for rights
+    true
+  end
+
+  def permit_write
+    # TODO: handling for rights
+    true
   end
 
 end
