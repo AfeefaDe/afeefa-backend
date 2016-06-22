@@ -1,6 +1,14 @@
 class Api::V1::BaseController < ApplicationController
 
   acts_as_jsonapi_resources
+  def jsonapi_require_record
+    super
+    unless @jsonapi_record
+      raise ActiveRecord::RecordNotFound.new("#{jsonapi_model_class} not found for given id #{params[:id]}!")
+    end
+  rescue ActiveRecord::RecordNotFound
+    head status: :not_found
+  end
 
   include DeviseTokenAuth::Concerns::SetUserByToken
 

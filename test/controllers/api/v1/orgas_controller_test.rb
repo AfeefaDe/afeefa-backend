@@ -95,15 +95,15 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'I must not create a new member in a not existing orga' do
       assert_no_difference 'User.count' do
-        post :create_member, id: Orga.last.id + 1, user: @user_json
+        post :create_member, id: 'not existing id', user: @user_json
         assert_response :not_found
       end
     end
 
     should 'I must not create a new member in an orga I am no admin in' do
       assert_no_difference 'User.count' do
-        post :create_member, id: create(:another_orga), user: @user_json
-        assert_response :unauthorized
+        post :create_member, id: create(:another_orga).id, user: @user_json
+        assert_response :forbidden
       end
     end
 
