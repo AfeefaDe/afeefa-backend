@@ -1,4 +1,5 @@
 class Api::V1::BaseController < ApplicationController
+
   acts_as_jsonapi_resources
 
   include DeviseTokenAuth::Concerns::SetUserByToken
@@ -24,14 +25,6 @@ class Api::V1::BaseController < ApplicationController
       :relationship_add,
       :relationship_remove
   ]
-
-  def ping
-    render json: { pong: Time.now }
-  end
-
-  def test_airbrake
-    raise Api::TestAirbrakeException.new('api request for testing airbrake triggered')
-  end
 
   private
 

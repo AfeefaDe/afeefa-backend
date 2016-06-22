@@ -64,8 +64,8 @@ Rails.application.routes.draw do
     end
 
     namespace :v1 do
-      get 'ping' => 'base#ping'
-      get 'test_airbrake' => 'base#test_airbrake'
+      get 'ping' => 'misc#ping'
+      get 'test_airbrake' => 'misc#test_airbrake'
 
       mount_devise_token_auth_for 'User', at: 'users'
 

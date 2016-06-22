@@ -2,7 +2,7 @@ require 'test_helper'
 #TODO: autoload
 require "#{Rails.root}/app/controllers/exceptions/api/controllers_api_exceptions"
 
-class Api::V1::BaseControllerTest < ActionController::TestCase
+class Api::V1::MiscControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   setup do
@@ -27,9 +27,7 @@ class Api::V1::BaseControllerTest < ActionController::TestCase
     Timecop.freeze(Time.now) do
       get :ping
       assert_response :success
-      expected = {
-          pong: Time.now
-      }.to_json
+      expected = Ping.new.to_jsonapi_hash.to_json
       assert_equal expected, response.body
     end
   end
