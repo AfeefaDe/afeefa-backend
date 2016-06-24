@@ -52,7 +52,13 @@ namespace :deploy do
     on roles(:web), in: :groups, limit: 3, wait: 10 do
       # Here we can do anything such as:
       within release_path do
-        execute 'svc -du ~/service/api' # maybe we can use -h instead of -du
+        api =
+          if fetch(:stage) == 'production'
+            'api'
+          else
+            'dev-api'
+          end
+        execute "svc -du ~/service/#{api}" # maybe we can use -h instead of -du
       end
     end
   end
