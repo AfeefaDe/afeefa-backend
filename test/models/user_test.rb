@@ -90,85 +90,11 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
-  end
-
-  context 'As admin' do
-    setup do
-      @admin = create(:admin)
-      @orga = @admin.orgas.first
-    end
-
-    should 'I want to create a new user to add it to my orga' do
-      @orga.expects(:add_new_member).once
-      User.expects(:create!).once
-
-      @admin.create_user_and_add_to_orga(email: 'team@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @orga)
-    end
-
-    context 'interacting with a member' do
-      setup do
-        @member = create(:member, orga: @orga)
-        @user = create(:user)
-      end
-
-      should 'I want to remove a user from an orga. i am not admin' do
+    should 'I must not add an existing user to any orga' do
+      another_orga = create(:another_orga)
+      assert_no_difference('another_orga.users.count') do
         assert_raise CanCan::AccessDenied do
-          assert_no_difference('@orga.users.count') do
-            @user.remove_user_from_orga(member: @member, orga: @orga)
-          end
-        end
-      end
-
-      should 'I want to remove a user from an orga. user is in orga' do
-        assert_difference('@orga.users.count', -1) do
-          @admin.remove_user_from_orga(member: @member, orga: @orga)
-        end
-        refute(@member.orga_member?(@orga) || @member.orga_admin?(@orga))
-      end
-
-      should 'I want to remove a user from an orga. user is not in orga' do
-        assert_raise ActiveRecord::RecordNotFound do
-          assert_no_difference('@orga.roles.count') do
-            @admin.remove_user_from_orga(member: @user, orga: @orga)
-          end
-        end
-      end
-
-      should 'I want to promote a member to admin, user not in orga' do
-        assert_raise ActiveRecord::RecordNotFound do
-          @admin.promote_member_to_admin(member: @user, orga: @orga)
-        end
-      end
-
-      should 'I want to promote a member to admin, i am not admin' do
-        assert_raise CanCan::AccessDenied do
-          @user.promote_member_to_admin(member: @member, orga: @orga)
-        end
-      end
-
-      should 'I want to promote a member to admin' do
-        assert_no_difference('@orga.roles.count') do
-          @admin.promote_member_to_admin(member: @member, orga: @orga)
-          assert_equal Role.find_by(orga: @orga, user: @member).title, Role::ORGA_ADMIN
-        end
-      end
-
-      should 'I want to demote an admin to member, user not in orga' do
-        assert_raise ActiveRecord::RecordNotFound do
-          @admin.demote_admin_to_member(member: @user, orga: @orga)
-        end
-      end
-
-      should 'I want to demote and admin to member, i am not admin' do
-        assert_raise CanCan::AccessDenied do
-          @user.demote_admin_to_member(member: @member, orga: @orga)
-        end
-      end
-
-      should 'I want to demote an admin to member' do
-        assert_no_difference('@orga.roles.count') do
-          @admin.demote_admin_to_member(member: @member, orga: @orga)
-          assert_equal Role.find_by(orga: @orga, user: @member).title, Role::ORGA_MEMBER
+          another_orga.add_new_member(new_member: create(:another_user), admin: @user)
         end
       end
     end
@@ -177,18 +103,139 @@ class UserTest < ActiveSupport::TestCase
   context 'As member' do
     setup do
       @member = create(:member, orga: build(:orga))
-      @orga = @member.orgas.first
+      @my_orga = @member.orgas.first
     end
-    should 'I must not add a new user to an orga' do
 
-      @orga.expects(:add_new_member).never
+    should 'I must not add a new user to an orga' do
+      @my_orga.expects(:add_new_member).never
 
       assert_no_difference('User.count') do
         assert_raise CanCan::AccessDenied do
-          @member.create_user_and_add_to_orga(email: 'foo@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @orga)
+          @member.create_user_and_add_to_orga(email: 'foo@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @my_orga)
+        end
+      end
+    end
+
+    should 'I must not add an existing user to any orga' do
+      new_user = create(:user)
+
+      assert_no_difference('@my_orga.users.count') do
+        assert_raise CanCan::AccessDenied do
+          @my_orga.add_new_member(new_member: new_user, admin: @member)
+        end
+      end
+
+      another_orga = create(:another_orga)
+      assert_no_difference('another_orga.users.count') do
+        assert_raise CanCan::AccessDenied do
+          another_orga.add_new_member(new_member: new_user, admin: @member)
         end
       end
     end
   end
 
+  context 'As admin' do
+    setup do
+      @admin = create(:admin)
+      @my_orga = @admin.orgas.first
+    end
+
+    should 'I want to create a new user to add it to my orga' do
+      @my_orga.expects(:add_new_member).once
+      User.expects(:create!).once
+
+      @admin.create_user_and_add_to_orga(email: 'team@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @my_orga)
+    end
+
+    context 'interacting with an user' do
+      setup do
+        @user = create(:user)
+      end
+
+      should 'I want to add an existing user to my orga' do
+        assert_difference('@my_orga.users.count') do
+          @my_orga.add_new_member(new_member: @user, admin: @admin)
+        end
+
+        assert @user.orga_member?(@my_orga)
+      end
+
+      context 'interacting with a member' do
+        setup do
+          @member = create(:member, orga: @my_orga)
+        end
+
+        should 'I must not add a member to my orga again' do
+          assert @member.orga_member?(@my_orga)
+          assert_raise UserIsAlreadyMemberException do
+            assert_no_difference('@my_orga.users.count') do
+              @my_orga.add_new_member(new_member: @member, admin: @admin)
+            end
+          end
+
+        end
+
+        should 'I want to remove a user from an orga. i am not admin' do
+          assert_raise CanCan::AccessDenied do
+            assert_no_difference('@my_orga.users.count') do
+              @user.remove_user_from_orga(member: @member, orga: @my_orga)
+            end
+          end
+        end
+
+        should 'I want to remove a user from an orga. user is in orga' do
+          assert_difference('@my_orga.users.count', -1) do
+            @admin.remove_user_from_orga(member: @member, orga: @my_orga)
+          end
+          refute(@member.orga_member?(@my_orga) || @member.orga_admin?(@my_orga))
+        end
+
+        should 'I want to remove a user from an orga. user is not in orga' do
+          assert_raise ActiveRecord::RecordNotFound do
+            assert_no_difference('@my_orga.roles.count') do
+              @admin.remove_user_from_orga(member: @user, orga: @my_orga)
+            end
+          end
+        end
+
+        should 'I want to promote a member to admin, user not in orga' do
+          assert_raise ActiveRecord::RecordNotFound do
+            @admin.promote_member_to_admin(member: @user, orga: @my_orga)
+          end
+        end
+
+        should 'I want to promote a member to admin, i am not admin' do
+          assert_raise CanCan::AccessDenied do
+            @user.promote_member_to_admin(member: @member, orga: @my_orga)
+          end
+        end
+
+        should 'I want to promote a member to admin' do
+          assert_no_difference('@my_orga.roles.count') do
+            @admin.promote_member_to_admin(member: @member, orga: @my_orga)
+            assert_equal Role.find_by(orga: @my_orga, user: @member).title, Role::ORGA_ADMIN
+          end
+        end
+
+        should 'I want to demote an admin to member, user not in orga' do
+          assert_raise ActiveRecord::RecordNotFound do
+            @admin.demote_admin_to_member(member: @user, orga: @my_orga)
+          end
+        end
+
+        should 'I want to demote and admin to member, i am not admin' do
+          assert_raise CanCan::AccessDenied do
+            @user.demote_admin_to_member(member: @member, orga: @my_orga)
+          end
+        end
+
+        should 'I want to demote an admin to member' do
+          assert_no_difference('@my_orga.roles.count') do
+            @admin.demote_admin_to_member(member: @member, orga: @my_orga)
+            assert_equal Role.find_by(orga: @my_orga, user: @member).title, Role::ORGA_MEMBER
+          end
+        end
+      end
+    end
+  end
 end
