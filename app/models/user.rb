@@ -71,8 +71,6 @@ class User < ActiveRecord::Base
     orgas.pluck(:id).include?(orga.id)
   end
 
-  private
-
   def has_role_for?(orga, role)
     if belongs_to_orga?(orga)
       roles.where(orga_id: orga.id).first.try(:title) == role

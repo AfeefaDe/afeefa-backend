@@ -62,7 +62,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def list_members
-    if current_api_v1_user && current_api_v1_user.belongs_to_orga?(@orga)
+    if current_api_v1_user && current_api_v1_user.orga_member?(@orga)
       users = Role.where(orga: @orga).map(&:user)
       render json: serialize(users)
     else
