@@ -1,11 +1,7 @@
 class Api::V1::MiscController < Api::V1::BaseController
 
-  def jsonapi_model_class
-    Ping
-  end
-
   def ping
-    render json: @jsonapi_record.to_jsonapi_hash
+    render json: JSONAPI::Serializer.serialize(Ping.new, is_collection: false)
   end
 
   def test_airbrake
