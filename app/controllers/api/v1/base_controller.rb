@@ -12,7 +12,8 @@ class Api::V1::BaseController < ApplicationController
   private
 
   def ensure_host
-    if (host = request.host).in?(allowed_hosts = Settings.api.hosts)
+    allowed_hosts = Settings.api.hosts
+    if (host = request.host).in?(allowed_hosts)
       true
     else
       render(
@@ -24,7 +25,8 @@ class Api::V1::BaseController < ApplicationController
   end
 
   def ensure_protocol
-    if (protocol = request.protocol.gsub(/:.*/, '')).in?(allowed_protocols = Settings.api.protocols)
+    allowed_protocols = Settings.api.protocols
+    if (protocol = request.protocol.gsub(/:.*/, '')).in?(allowed_protocols)
       true
     else
       render(
@@ -44,8 +46,8 @@ class Api::V1::BaseController < ApplicationController
     end
   end
 
-  def serialize(model, is_collection: false, **options)
-    options[:is_collection] = is_collection
+  def serialize(model, **options)
+    options[:is_collection] = model.respond_to?(:each) && !model.respond_to?(:each_pair)
     JSONAPI::Serializer.serialize(model, options)
   end
 
