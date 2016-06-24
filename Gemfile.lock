@@ -110,8 +110,8 @@ GEM
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
     json (1.8.3)
-    jsonapi_for_rails (0.2.1)
-      rails (>= 4.0.0, < 5.1)
+    jsonapi-serializers (0.13.0)
+      activesupport
     kgio (2.10.0)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
@@ -263,7 +263,7 @@ DEPENDENCIES
   devise_token_auth
   factory_girl_rails
   jbuilder (~> 2.0)
-  jsonapi_for_rails
+  jsonapi-serializers
   minitest-rails
   minitest-rails-capybara
   minitest-reporters

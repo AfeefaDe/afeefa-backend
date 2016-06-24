@@ -57,7 +57,7 @@ gem 'cancancan', '~> 1.10' # see https://github.com/CanCanCommunity/cancancan
 gem 'config'
 
 # json api spec
-gem 'jsonapi_for_rails'
+gem 'jsonapi-serializers'
 
 # redmine integration
 gem 'airbrake', '~> 5.3'

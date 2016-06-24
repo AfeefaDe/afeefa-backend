@@ -27,8 +27,7 @@ class Api::V1::MiscControllerTest < ActionController::TestCase
     Timecop.freeze(Time.now) do
       get :ping
       assert_response :success
-      expected = Ping.new.to_jsonapi_hash.to_json
-      assert_equal expected, response.body
+      assert_equal({ pong: Time.current.to_s }.to_json, response.body)
     end
   end
 
