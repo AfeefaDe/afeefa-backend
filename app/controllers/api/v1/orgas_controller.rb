@@ -58,12 +58,11 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def list_members
-    if current_api_v1_user.belongs_to_orga?(@orga)
-      data = {:type => 'orgas', :id => @orga.id.to_s, :attributes => @orga.users.pluck(:email, :surname, :forename)}
-      json = {:data => data}
-      render json: json
-    else # || current_api_v1_user.nil?
-      head status :forbidden
+    if current_api_v1_user && current_api_v1_user.belongs_to_orga?(@orga)
+      users = Role.where(user: @orga).map(&:user)
+      render json: serialize(users, is_collection: true)
+    else
+      head status: :forbidden
     end
   end
 

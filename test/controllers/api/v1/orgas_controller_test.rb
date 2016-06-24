@@ -117,8 +117,36 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
   end
 
   context 'As member' do
+    setup do
+      @member = create(:member, orga: build(:orga))
+    end
+
     should 'I want a list of all members in the corresponding orga' do
       assert_routing 'api/v1/orgas/1/users', controller: 'api/v1/orgas', action: 'list_members', id: '1'
     end
+
+    should 'render json api spec for user list' do
+      stub_current_user(user: @member)
+      orga = @member.orgas.first
+
+      get :list_members, id: orga.id
+      assert_response :success
+      expected = UserSerializer.serialize([@member], is_collection: true).to_json
+      assert_equal expected, response.body
+    end
   end
+
+  context 'As user' do
+    setup do
+      @user = create(:user)
+      @orga = create(:orga)
+    end
+
+    should 'I want a list of all members in an orga, I am not member in orga' do
+      stub_current_user(user: @user)
+      get :list_members, id: @orga.id
+      assert_response :forbidden
+    end
+  end
+
 end
