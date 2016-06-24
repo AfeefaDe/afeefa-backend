@@ -239,7 +239,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should 'I want to leave an orga' do
-      assert_difference('@orga.users.count', -1) do
+      assert_difference('@my_orga.users.count', -1) do
         @member.leave_orga(orga: @orga)
       end
       refute(@member.belongs_to_orga?(@orga))
@@ -247,7 +247,7 @@ class UserTest < ActiveSupport::TestCase
 
     should 'I want to leave an orga, I am not in orga' do
       assert_raise ActiveRecord::RecordNotFound do
-        assert_no_difference('@orga.roles.count') do
+        assert_no_difference('@my_orga.roles.count') do
           @member.leave_orga(orga: build(:orga))
         end
       end

@@ -65,6 +65,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  private
+
   def belongs_to_orga?(orga)
     orgas.pluck(:id).include?(orga.id)
   end
