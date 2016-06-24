@@ -2,14 +2,13 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   before_action :set_user, only: [:list_orgas]
 
+  def jsonapi_model_class
+    User
+  end
+
   def list_orgas
-    orgas = Array.new
-    roles = Role.where(user: @user).find_each do |role|
-      orga = {:title => Orga.find(role.orga_id).title}
-      orgas.push({ :type => 'orgas', :id => role.orga_id.to_s, :attributes => orga})
-    end
-    json = { :data => orgas}.to_json
-    render json: json
+    @jsonapi_record = Role.where(user: @user).map(&:orga)
+    render json: @jsonapi_record.map(&:to_jsonapi_hash)
   end
 
   def set_user

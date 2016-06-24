@@ -1,5 +1,15 @@
 class Api::V1::BaseController < ApplicationController
 
+  acts_as_jsonapi_resources
+  def jsonapi_require_record
+    super
+    unless @jsonapi_record
+      raise ActiveRecord::RecordNotFound.new("#{jsonapi_model_class} not found for given id #{params[:id]}!")
+    end
+  rescue ActiveRecord::RecordNotFound
+    head status: :not_found
+  end
+
   include DeviseTokenAuth::Concerns::SetUserByToken
 
   respond_to :json
@@ -9,13 +19,20 @@ class Api::V1::BaseController < ApplicationController
   before_action :authenticate_api_v1_user!, except: %i(ping)
   before_action :ensure_admin_secret, only: %i(test_airbrake)
 
-  def ping
-    render json: { pong: Time.now }
-  end
+  before_action :permit_read, only: [
+      :index,
+      :show,
+      :relationship_show
+  ]
 
-  def test_airbrake
-    raise Api::TestAirbrakeException.new('api request for testing airbrake triggered')
-  end
+  before_action :permit_write, only: [
+      :create,
+      :update,
+      :destroy,
+      :relationship_update,
+      :relationship_add,
+      :relationship_remove
+  ]
 
   private
 
@@ -50,6 +67,16 @@ class Api::V1::BaseController < ApplicationController
       head status: 403
       false
     end
+  end
+
+  def permit_read
+    # TODO: handling for rights
+    true
+  end
+
+  def permit_write
+    # TODO: handling for rights
+    true
   end
 
 end

@@ -3,6 +3,10 @@ class Api::V1::OrgasController < Api::V1::BaseController
   before_action :set_orga
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin]
 
+  def jsonapi_model_class
+    Orga
+  end
+
   def create_member
     begin
       current_api_v1_user.create_user_and_add_to_orga(
@@ -11,11 +15,9 @@ class Api::V1::OrgasController < Api::V1::BaseController
           surname: user_params[:surname],
           email: user_params[:email]
       )
-
       head status: :created
-
     rescue CanCan::AccessDenied
-      head status: :unauthorized
+      head status: :forbidden
     rescue ActiveRecord::RecordInvalid
       head status: :unprocessable_entity
     end
@@ -30,7 +32,6 @@ class Api::V1::OrgasController < Api::V1::BaseController
     begin
       current_api_v1_user.remove_user_from_orga(member: @user, orga: @orga)
       head status: :ok
-
     rescue CanCan::AccessDenied
       head status: :forbidden
     rescue ActiveRecord::RecordNotFound
@@ -42,7 +43,6 @@ class Api::V1::OrgasController < Api::V1::BaseController
     begin
       current_api_v1_user.promote_member_to_admin(member: @user, orga: @orga)
       head status: :ok
-
     rescue CanCan::AccessDenied
       head status: :forbidden
     rescue ActiveRecord::RecordNotFound
@@ -54,7 +54,6 @@ class Api::V1::OrgasController < Api::V1::BaseController
     begin
       current_api_v1_user.demote_admin_to_member(member: @user, orga: @orga)
       head status: :ok
-
     rescue CanCan::AccessDenied
       head status: :forbidden
     rescue ActiveRecord::RecordNotFound

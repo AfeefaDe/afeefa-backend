@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 4.2'
 # Use mysql2 as the database for Active Record
-gem 'mysql2', '~> 0.3.18'
+gem 'mysql2'
 
 # Use SCSS for stylesheets
 # gem 'sass-rails', '~> 5.0'
@@ -31,7 +31,9 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'tzinfo-data'
 
 # Use Unicorn as the app server
-gem 'unicorn'
+platforms :ruby do
+  gem 'unicorn'
+end
 
 ##########################
 # project relevant gems #
@@ -54,6 +56,9 @@ gem 'cancancan', '~> 1.10' # see https://github.com/CanCanCommunity/cancancan
 # extract configuration to settings
 gem 'config'
 
+# json api spec
+gem 'jsonapi_for_rails'
+
 # redmine integration
 gem 'airbrake', '~> 5.3'
 
@@ -61,6 +66,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   # for debug
   gem 'byebug'
+  gem 'better_errors'
 
   # test framework
   gem 'minitest-rails'
@@ -78,6 +84,8 @@ group :development, :test do
   gem 'bullet'
 
   gem 'simplecov', require: false
+
+  gem 'sqlite3'
 end
 
 group :development do
@@ -89,7 +97,4 @@ group :development do
 
   # Use Capistrano for deployment
   gem 'capistrano-rails'
-
-  # Use sqlite3 as the database for Active Record
-  gem 'sqlite3'
 end
