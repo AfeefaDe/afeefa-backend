@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
 
   def leave_orga(orga:)
     unless belongs_to_orga?(orga)
-      raise ActiveRecord::RecordNotFound.new('user not in orga!')
+      raise ActiveRecord::RecordNotFound.new('user is not member of orga')
     end
     roles.where(orga: orga, user: self).delete_all
   end
@@ -47,11 +47,11 @@ class User < ActiveRecord::Base
     member.leave_orga(orga: orga)
   end
 
-  def promote_member_to_admin(member: , orga:)
+  def promote_member_to_admin(member:, orga:)
     update_role_for_member member: member, orga: orga, role: Role::ORGA_ADMIN
   end
 
-  def demote_admin_to_member(member: , orga:)
+  def demote_admin_to_member(member:, orga:)
     update_role_for_member member: member, orga: orga, role: Role::ORGA_MEMBER
   end
 
@@ -72,7 +72,11 @@ class User < ActiveRecord::Base
   private
 
   def has_role_for?(orga, role)
-    belongs_to_orga?(orga) ? roles.where(orga_id: orga.id).first.try(:title) == role : false
+    if belongs_to_orga?(orga)
+      roles.where(orga_id: orga.id).first.try(:title) == role
+    else
+      false
+    end
   end
 
   def update_role_for_member(member:, orga:, role:)
@@ -80,11 +84,11 @@ class User < ActiveRecord::Base
       raise CanCan::AccessDenied.new('no permission to modify user', __method__, self)
     end
 
-    currRole = Role.find_by(orga: orga, user: member)
-    if currRole.nil?
+    current_role = Role.find_by(orga: orga, user: member)
+    if current_role.nil?
       raise ActiveRecord::RecordNotFound.new('user not in orga!')
     end
-    currRole.update(title: role)
+    current_role.update(title: role)
   end
 
 end
