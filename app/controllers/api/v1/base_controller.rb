@@ -44,4 +44,9 @@ class Api::V1::BaseController < ApplicationController
     end
   end
 
+  def serialize(model, is_collection: false, **options)
+    options[:is_collection] = is_collection
+    JSONAPI::Serializer.serialize(model, options)
+  end
+
 end

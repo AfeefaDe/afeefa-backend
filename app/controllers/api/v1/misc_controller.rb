@@ -1,7 +1,7 @@
 class Api::V1::MiscController < Api::V1::BaseController
 
   def ping
-    render json: JSONAPI::Serializer.serialize(Ping.new, is_collection: false)
+    render json: { pong: Time.current.to_s }
   end
 
   def test_airbrake
