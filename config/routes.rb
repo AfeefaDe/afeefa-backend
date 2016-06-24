@@ -56,26 +56,19 @@ Rails.application.routes.draw do
 
   namespace :api do
 
-    concern :json_api do
-      get     'relationships/:relationship', action: 'relationship_show'
-      patch   'relationships/:relationship', action: 'relationship_update'
-      post    'relationships/:relationship', action: 'relationship_add'
-      delete  'relationships/:relationship', action: 'relationship_remove'
-    end
-
     namespace :v1 do
       get 'ping' => 'misc#ping'
       get 'test_airbrake' => 'misc#test_airbrake'
 
       mount_devise_token_auth_for 'User', at: 'users'
 
-      resources :users, concerns: :json_api, only: [] do
+      resources :users, only: [] do
         member do
           get :list_orgas, path: 'orgas'
         end
       end
 
-      resources :orgas, concerns: :json_api do
+      resources :orgas do
         member do
           get :list_members, path: 'users'
           post :create_member, path: 'users'
