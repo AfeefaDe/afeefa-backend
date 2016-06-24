@@ -9,6 +9,14 @@ class Api::V1::BaseController < ApplicationController
   before_action :authenticate_api_v1_user!, except: %i(ping)
   before_action :ensure_admin_secret, only: %i(test_airbrake)
 
+  rescue_from CanCan::AccessDenied do
+    head status: :forbidden
+  end
+
+  rescue_from ActiveRecord::RecordNotFound do
+    head status: :not_found
+  end
+
   private
 
   def ensure_host

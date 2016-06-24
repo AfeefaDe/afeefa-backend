@@ -26,7 +26,7 @@ class Api::V1::MiscControllerTest < ActionController::TestCase
   should 'have a ping method' do
     Timecop.freeze(Time.now) do
       get :ping
-      assert_response :success
+      assert_response :ok
       assert_equal({ pong: Time.current.to_s }.to_json, response.body)
     end
   end
@@ -65,7 +65,7 @@ class Api::V1::MiscControllerTest < ActionController::TestCase
 
   should 'not authenticate the user for ping' do
     get :ping
-    assert_response :success
+    assert_response :ok
   end
 
 end
