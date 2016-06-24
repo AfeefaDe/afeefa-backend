@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def leave_orga(orga)
+  def leave_orga(orga:)
     unless belongs_to_orga?(orga)
       raise ActiveRecord::RecordNotFound.new('user not in orga!')
     end
@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
     unless orga_admin?(orga)
       raise CanCan::AccessDenied.new('no permission to remove user', __method__, self)
     end
-    member.leave_orga(orga)
+    member.leave_orga(orga: orga)
   end
 
   def promote_member_to_admin(member: , orga:)

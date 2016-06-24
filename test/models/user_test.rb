@@ -123,7 +123,7 @@ class UserTest < ActiveSupport::TestCase
         assert_difference('@orga.users.count', -1) do
           @admin.remove_user_from_orga(member: @member, orga: @orga)
         end
-        refute(@member.orga_member?(@orga) || @member.orga_admin?(@orga))
+        refute(@member.belongs_to_orga?(@orga))
       end
 
       should 'I want to remove a user from an orga. user is not in orga' do
@@ -180,12 +180,26 @@ class UserTest < ActiveSupport::TestCase
       @orga = @member.orgas.first
     end
     should 'I must not add a new user to an orga' do
-
       @orga.expects(:add_new_member).never
 
       assert_no_difference('User.count') do
         assert_raise CanCan::AccessDenied do
           @member.create_user_and_add_to_orga(email: 'foo@afeefa.de', forename: 'Afeefa', surname: 'Team', orga: @orga)
+        end
+      end
+    end
+
+    should 'I want to leave an orga' do
+      assert_difference('@orga.users.count', -1) do
+        @member.leave_orga(orga: @orga)
+      end
+      refute(@member.belongs_to_orga?(@orga))
+    end
+
+    should 'I want to leave an orga, I am not in orga' do
+      assert_raise ActiveRecord::RecordNotFound do
+        assert_no_difference('@orga.roles.count') do
+          @member.leave_orga(orga: build(:orga))
         end
       end
     end

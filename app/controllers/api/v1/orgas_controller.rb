@@ -26,7 +26,11 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   def remove_member
     begin
-      current_api_v1_user.remove_user_from_orga(member: @user, orga: @orga)
+      if current_api_v1_user == @user
+        current_api_v1_user.leave_orga(orga: @orga)
+      else
+        current_api_v1_user.remove_user_from_orga(member: @user, orga: @orga)
+      end
       head status: :ok
     rescue CanCan::AccessDenied
       head status: :forbidden

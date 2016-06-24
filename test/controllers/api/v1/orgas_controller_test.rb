@@ -26,24 +26,24 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         @user = create(:user)
       end
 
-      should 'try to remove user from orga' do
+      should 'I want to try to remove a user from orga' do
         @admin.expects(:remove_user_from_orga).once
         delete :remove_member, id: @orga.id, user_id: @member.id
       end
 
-      should 'remove user from orga' do
+      should 'I want to remove a user from orga' do
         delete :remove_member, id: @orga.id, user_id: @member.id
         assert_response :ok
       end
 
-      should 'remove user from orga, am not admin' do
+      should 'I want to remove a user from orga, am not admin, not myself' do
         stub_current_user(user: @user)
 
         delete :remove_member, id: @orga.id, user_id: @member.id
         assert_response :forbidden
       end
 
-      should 'remove user from orga, user not in orga' do
+      should 'I want remove a user from orga, the user not in orga' do
         delete :remove_member, id: @orga.id, user_id: @user.id
         assert_response :not_found
       end
@@ -133,6 +133,13 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_response :success
       expected = UserSerializer.serialize([@member], is_collection: true).to_json
       assert_equal expected, response.body
+    end
+
+    should 'I want to leave orga' do
+      stub_current_user(user: @member)
+
+      delete :remove_member, id: @member.orgas.first.id, user_id: @member.id
+      assert_response :success
     end
   end
 
