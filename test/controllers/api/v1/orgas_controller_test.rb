@@ -131,7 +131,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       @member = create(:member, orga: build(:orga))
       @orga = @member.orgas.first
       stub_current_user(user: @member)
-
     end
 
     should 'I want a list of all members in the corresponding orga' do
@@ -156,6 +155,16 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :forbidden
       end
     end
+
+    should 'I want to update the data of the orga' do
+      desc = @orga[:description]
+      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle', logo: 'newLogo.png'}}
+      assert_response :success
+      @orga.reload
+      assert_equal @orga[:title], 'newTitle'
+      assert_equal @orga[:logo], 'newLogo.png'
+      assert_equal @orga[:description], desc
+    end
   end
 
   context 'As user' do
@@ -168,6 +177,18 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       stub_current_user(user: @user)
       get :list_members, id: @orga.id
       assert_response :forbidden
+    end
+
+    should 'I want to update the data of some orga, I am not member in orga' do
+      desc = @orga[:description]
+      upd = @orga[:updated_at]
+      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle', logo: 'newLogo.png'}}
+      assert_response :forbidden
+      @orga.reload
+      assert_not_equal @orga[:title], 'newTitle'
+      assert_not_equal @orga[:logo], 'newLogo.png'
+      assert_equal @orga[:description], desc
+      assert_in_delta @orga[:updated_at], upd, 0.0001
     end
   end
 

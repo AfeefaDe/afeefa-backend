@@ -1,7 +1,12 @@
 class Api::V1::OrgasController < Api::V1::BaseController
 
   before_action :set_orga
+<<<<<<< afc8f7bedb867e96dc07e3051161f147097ecf20
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin, :add_member]
+=======
+  before_action :set_user, only: [:remove_member, :promote_member, :demote_admin]
+  before_action :check_curr_user, only: [:update, :list_members]
+>>>>>>> [FEATURE] as member: update own orga, refs #8
 
   def create_member
     begin
@@ -49,10 +54,19 @@ class Api::V1::OrgasController < Api::V1::BaseController
     render json: serialize(members)
   end
 
+  def update
+    @orga.update(orga_params[:attributes])
+    render json: @orga
+  end
+
   private
 
   def user_params
     params.require(:user).permit(:forename, :surname, :email)
+  end
+
+  def orga_params
+    params.require(:data).permit(:id , :type, :attributes => [:title, :description, :logo])
   end
 
   def set_orga
@@ -61,5 +75,11 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   def set_user
     @user = User.find(params[:user_id])
+  end
+
+  def check_curr_user
+    unless current_api_v1_user && current_api_v1_user.belongs_to_orga?(@orga)
+      head status: :forbidden
+    end
   end
 end
