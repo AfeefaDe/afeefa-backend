@@ -119,6 +119,8 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
   context 'As member' do
     setup do
       @member = create(:member, orga: build(:orga))
+      @orga = @member.orgas.first
+      stub_current_user(user: @member)
     end
 
     should 'I want a list of all members in the corresponding orga' do
@@ -126,20 +128,25 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     end
 
     should 'render json api spec for user list' do
-      stub_current_user(user: @member)
-      orga = @member.orgas.first
-
-      get :list_members, id: orga.id
+      get :list_members, id: @orga.id
       assert_response :success
       expected = UserSerializer.serialize([@member], is_collection: true).to_json
       assert_equal expected, response.body
     end
 
     should 'I want to leave orga' do
-      stub_current_user(user: @member)
-
-      delete :remove_member, id: @member.orgas.first.id, user_id: @member.id
+      delete :remove_member, id: @orga.id, user_id: @member.id
       assert_response :success
+    end
+
+    should 'I want to update the data of the orga' do
+      desc = @orga[:description]
+      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle', logo: 'newLogo.png'}}
+      assert_response :success
+      @orga.reload
+      assert_equal @orga[:title], 'newTitle'
+      assert_equal @orga[:logo], 'newLogo.png'
+      assert_equal @orga[:description], desc
     end
   end
 
@@ -153,6 +160,18 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       stub_current_user(user: @user)
       get :list_members, id: @orga.id
       assert_response :forbidden
+    end
+
+    should 'I want to update the data of some orga, I am not member in orga' do
+      desc = @orga[:description]
+      upd = @orga[:updated_at]
+      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle', logo: 'newLogo.png'}}
+      assert_response :forbidden
+      @orga.reload
+      assert_not_equal @orga[:title], 'newTitle'
+      assert_not_equal @orga[:logo], 'newLogo.png'
+      assert_equal @orga[:description], desc
+      assert_in_delta @orga[:updated_at], upd, 0.0001
     end
   end
 

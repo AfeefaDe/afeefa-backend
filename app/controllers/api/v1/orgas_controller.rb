@@ -2,6 +2,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   before_action :set_orga
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin]
+  before_action :check_curr_user, only: [:update, :list_members]
 
   def create_member
     begin
@@ -62,18 +63,23 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def list_members
-    if current_api_v1_user && current_api_v1_user.belongs_to_orga?(@orga)
-      users = Role.where(orga: @orga).map(&:user)
-      render json: serialize(users)
-    else
-      head status: :forbidden
-    end
+    users = Role.where(orga: @orga).map(&:user)
+    render json: serialize(users)
+  end
+
+  def update
+    @orga.update(orga_params[:attributes])
+    render json: @orga
   end
 
   private
 
   def user_params
     params.require(:user).permit(:forename, :surname, :email)
+  end
+
+  def orga_params
+    params.require(:data).permit(:id , :type, :attributes => [:title, :description, :logo])
   end
 
   def set_orga
@@ -86,5 +92,11 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   def set_user
     @user = User.find(params[:user_id])
+  end
+
+  def check_curr_user
+    unless current_api_v1_user && current_api_v1_user.belongs_to_orga?(@orga)
+      head status: :forbidden
+    end
   end
 end
