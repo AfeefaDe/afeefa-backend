@@ -1,6 +1,4 @@
 require 'test_helper'
-#TODO: autoload
-require "#{Rails.root}/app/controllers/exceptions/api/controllers_api_exceptions"
 
 class Api::V1::MiscControllerTest < ActionController::TestCase
   include Devise::TestHelpers
@@ -48,7 +46,6 @@ class Api::V1::MiscControllerTest < ActionController::TestCase
   end
 
   should 'authenticate the user' do
-    # TODO: replace with default method which requires login
     assert_raise Api::TestAirbrakeException do
       get :test_airbrake, admin_secret: '0815'
       assert_response :error
