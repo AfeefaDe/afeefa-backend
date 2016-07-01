@@ -7,6 +7,21 @@ class Api::V1::MiscControllerTest < ActionController::TestCase
     stub_current_user
   end
 
+  should 'send cross origin header in development' do
+    Rails.env.stubs(:development?).returns(true)
+    get :ping
+    assert_includes response.headers, 'Access-Control-Allow-Origin'
+    assert_includes response.headers, 'Access-Control-Request-Method'
+    assert_equal '*', response.headers['Access-Control-Allow-Origin']
+    assert_equal '*', response.headers['Access-Control-Request-Method']
+  end
+
+  should 'not send cross origin header if not in development' do
+    get :ping
+    assert_not_includes response.headers, 'Access-Control-Allow-Origin'
+    assert_not_includes response.headers, 'Access-Control-Request-Method'
+  end
+
   should 'fail for wrong host' do
     ActionController::TestRequest.any_instance.stubs(:host).returns('dummy-host')
     get :ping
