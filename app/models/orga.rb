@@ -20,6 +20,7 @@ class Orga < ActiveRecord::Base
         raise UserIsAlreadyMemberException
       else
         Role.create!(user: new_member, orga: self, title: Role::ORGA_MEMBER)
+        return new_member
       end
     else
       raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, admin)

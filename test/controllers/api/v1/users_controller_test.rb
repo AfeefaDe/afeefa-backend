@@ -21,7 +21,7 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
       orga = @member.orgas.first
 
       get :list_orgas, id: @member.id
-      assert_response :success
+      assert_response :ok
       expected = OrgaSerializer.serialize([orga], is_collection: true).to_json
       assert_equal expected, response.body
     end
