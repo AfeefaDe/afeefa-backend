@@ -4,10 +4,9 @@ class ApplicationController < ActionController::Base
   # protect_from_forgery with: :exception
   protect_from_forgery with: :null_session
 
-  after_action :set_access_control_headers
+  before_action :set_access_control_headers
 
   def set_access_control_headers
-    #todo clean up urls and remove wildcard
     if Rails.env.development?
       headers['Access-Control-Allow-Origin'] = '*'
       headers['Access-Control-Request-Method']= '*'

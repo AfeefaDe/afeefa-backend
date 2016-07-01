@@ -22,6 +22,16 @@ class Api::V1::MiscControllerTest < ActionController::TestCase
     assert_not_includes response.headers, 'Access-Control-Request-Method'
   end
 
+  should 'send cross origin header in development also if authorization failed' do
+    Rails.env.stubs(:development?).returns(true)
+    unstub_current_user
+    get :test_airbrake
+    assert_includes response.headers, 'Access-Control-Allow-Origin'
+    assert_includes response.headers, 'Access-Control-Request-Method'
+    assert_equal '*', response.headers['Access-Control-Allow-Origin']
+    assert_equal '*', response.headers['Access-Control-Request-Method']
+  end
+
   should 'fail for wrong host' do
     ActionController::TestRequest.any_instance.stubs(:host).returns('dummy-host')
     get :ping
