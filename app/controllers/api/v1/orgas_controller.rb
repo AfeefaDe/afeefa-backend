@@ -45,12 +45,8 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def list_members
-    if current_api_v1_user && current_api_v1_user.orga_member?(@orga)
-      users = Role.where(orga: @orga).map(&:user)
-      render json: serialize(users)
-    else
-      head status: :forbidden
-    end
+    members = @orga.list_members(member: current_api_v1_user)
+    render json: serialize(members)
   end
 
   private

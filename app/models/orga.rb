@@ -24,4 +24,24 @@ class Orga < ActiveRecord::Base
     end
   end
 
+  def add_new_suborga(new_suborga:, admin:)
+    if admin.orga_admin?(self)
+      if suborgas.include?(new_suborga)
+        raise OrgaIsAlreadySuborgaException
+      else
+        suborgas << new_suborga
+      end
+    else
+      raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, admin)
+    end
+  end
+
+  def list_members(member:)
+    if member.orga_member?(self)
+      return users
+    else
+      raise CanCan::AccessDenied.new('user is not member of this orga', __method__, member)
+    end
+  end
+
 end
