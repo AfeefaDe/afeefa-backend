@@ -2,6 +2,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   before_action :set_orga
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin, :add_member]
+  before_action :set_suborga, only: [:add_suborga]
 
   def create_member
     begin
@@ -45,12 +46,18 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def list_members
+    # TODO: refactor this, move list logic and rights to model!
     if current_api_v1_user && current_api_v1_user.orga_member?(@orga)
       users = Role.where(orga: @orga).map(&:user)
       render json: serialize(users)
     else
       head status: :forbidden
     end
+  end
+
+  def add_suborga
+    @orga.add_new_suborga(new_suborga: @suborga, admin: current_api_v1_user)
+    head :no_content
   end
 
   private
@@ -65,5 +72,9 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   def set_user
     @user = User.find(params[:user_id])
+  end
+
+  def set_suborga
+    @suborga = Orga.find(params[:suborga_id])
   end
 end

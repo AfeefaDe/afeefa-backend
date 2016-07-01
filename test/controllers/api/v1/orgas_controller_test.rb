@@ -60,14 +60,10 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :forbidden
       end
 
-      should 'I want to promote a member to admin, a)' do
-        put :promote_member, id: @orga.id, user_id: @member.id
-        assert_response :no_content
-      end
-
-      should 'I want to promote a member to admin, b)' do
+      should 'I want to promote a member to admin' do
         @admin.expects(:promote_member_to_admin).once
         put :promote_member, id: @orga.id, user_id: @member.id
+        assert_response :no_content
       end
 
       should 'I want to demote an admin to member, user is not in orga' do
@@ -82,24 +78,28 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :forbidden
       end
 
-      should 'I want to demote an admin to member, a)' do
-        put :demote_admin, id: @orga.id, user_id: @member.id
-        assert_response :no_content
-      end
-
-      should 'I want to demote an admin to member, b)' do
+      should 'I want to demote an admin to member' do
         User.any_instance.expects(:demote_admin_to_member).once
         put :demote_admin, id: @orga.id, user_id: @member.id
-      end
-
-      should 'I want to add an existing user to my orga a)' do
-        put :add_member, id: @orga.id, user_id: @user.id
         assert_response :no_content
       end
 
-      should 'I want to add an existing user to my orga b)' do
+      should 'I want to add an existing user to my orga' do
         Orga.any_instance.expects(:add_new_member).once
         put :add_member, id: @orga.id, user_id: @user.id
+        assert_response :no_content
+      end
+    end
+
+    context 'interacting with a suborga' do
+      setup do
+        @suborga = create(:another_orga)
+      end
+
+      should 'I want to add an existing orga to suborgas of my orga' do
+        Orga.any_instance.expects(:add_new_suborga).once
+        put :add_suborga, id: @orga.id, suborga_id: @suborga.id
+        assert_response :no_content
       end
     end
 
@@ -118,9 +118,9 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     end
 
     should 'I must not create a new user that already exists' do
-      @user = create(:user)
+      user = create(:user)
       assert_no_difference 'User.count' do
-        post :create_member, id: @orga.id, user: { forename: 'a', surname: 'b', email: @user.email }
+        post :create_member, id: @orga.id, user: { forename: 'a', surname: 'b', email: user.email }
         assert_response :unprocessable_entity
       end
     end
@@ -131,7 +131,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       @member = create(:member, orga: build(:orga))
       @orga = @member.orgas.first
       stub_current_user(user: @member)
-
     end
 
     should 'I want a list of all members in the corresponding orga' do
@@ -153,6 +152,14 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     should 'I must not add an existing user to my orga' do
       assert_no_difference('@orga.users.count') do
         put :add_member, id: @orga.id, user_id: create(:user).id
+        assert_response :forbidden
+      end
+    end
+
+    should 'I must not add an existing orga to suborgas of my orga' do
+      suborga = create(:another_orga)
+      assert_no_difference('@orga.users.count') do
+        put :add_suborga, id: @orga.id, suborga_id: suborga.id
         assert_response :forbidden
       end
     end
