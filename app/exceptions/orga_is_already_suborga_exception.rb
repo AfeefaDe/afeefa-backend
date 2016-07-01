@@ -1,0 +1,2 @@
+class OrgaIsAlreadySuborgaException < StandardError
+end
