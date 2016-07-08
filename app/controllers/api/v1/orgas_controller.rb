@@ -1,12 +1,8 @@
 class Api::V1::OrgasController < Api::V1::BaseController
 
   before_action :set_orga
-<<<<<<< afc8f7bedb867e96dc07e3051161f147097ecf20
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin, :add_member]
-=======
-  before_action :set_user, only: [:remove_member, :promote_member, :demote_admin]
   before_action :check_curr_user, only: [:update, :list_members]
->>>>>>> [FEATURE] as member: update own orga, refs #8
 
   def create_member
     begin

@@ -37,7 +37,7 @@ class Orga < ActiveRecord::Base
   end
 
   def list_members(member:)
-    if member.orga_member?(self)
+    if member.belongs_to_orga?(self)
       return users
     else
       raise CanCan::AccessDenied.new('user is not member of this orga', __method__, member)

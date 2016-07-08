@@ -65,11 +65,11 @@ class User < ActiveRecord::Base
     end
   end
 
-  private
-
   def belongs_to_orga?(orga)
     orgas.pluck(:id).include?(orga.id)
   end
+
+  private
 
   def has_role_for?(orga, role)
     if belongs_to_orga?(orga)
