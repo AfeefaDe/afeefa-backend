@@ -154,10 +154,10 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     setup do
       @user = create(:user)
       @orga = create(:orga)
+      stub_current_user(user: @user)
     end
 
     should 'I want a list of all members in an orga, I am not member in orga' do
-      stub_current_user(user: @user)
       get :list_members, id: @orga.id
       assert_response :forbidden
     end
