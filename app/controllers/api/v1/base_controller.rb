@@ -9,7 +9,8 @@ class Api::V1::BaseController < ApplicationController
   before_action :authenticate_api_v1_user!, except: %i(ping)
   before_action :ensure_admin_secret, only: %i(test_airbrake)
 
-  rescue_from CanCan::AccessDenied do
+  rescue_from CanCan::AccessDenied do |exception|
+    Rails.logger.debug "AccessDenied-Exception, message: #{exception.message}, from: #{exception.action}"
     head status: :forbidden
   end
 
