@@ -13,7 +13,7 @@ class Orga < ActiveRecord::Base
 
   def add_new_member(new_member:, admin:)
     if admin.orga_admin?(self)
-      if new_member.orga_member?(self)
+      if new_member.belongs_to_orga?(self)
         raise UserIsAlreadyMemberException
       else
         Role.create!(user: new_member, orga: self, title: Role::ORGA_MEMBER)

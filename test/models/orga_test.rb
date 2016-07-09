@@ -42,46 +42,53 @@ class OrgaTest < ActiveSupport::TestCase
 
   context 'As admin' do
     setup do
-      @user = create(:admin)
+      @admin = create(:admin)
+      @user = create(:user)
     end
 
     should 'I want to add a new member to my orga' do
-      new_user = create(:user)
-      orga = @user.orgas.first
+      orga = @admin.orgas.first
 
       assert_difference('orga.users.count') do
-        orga.add_new_member(new_member: new_user, admin: @user)
+        orga.add_new_member(new_member: @user, admin: @admin)
       end
 
-      assert_equal(orga, new_user.reload.orgas.first)
+      assert_equal(orga, @user.reload.orgas.first)
     end
 
     should 'I must not add a new member to a foreign orga' do
-      new_user = create(:user)
       orga = create(:another_orga)
 
-      assert_no_difference('new_user.orgas.count') do
+      assert_no_difference('@user.orgas.count') do
         assert_no_difference('orga.users.count') do
           assert_raise CanCan::AccessDenied do
-            orga.add_new_member(new_member: new_user, admin: @user)
+            orga.add_new_member(new_member: @user, admin: @admin)
           end
         end
       end
     end
 
     should 'I must not add the same member to my orga again' do
-      new_user = create(:user)
-      orga = @user.orgas.first
+      orga = @admin.orgas.first
 
-      orga.add_new_member(new_member: new_user, admin: @user)
+      orga.add_new_member(new_member: @user, admin: @admin)
 
       assert_no_difference('orga.users.count') do
-        assert_no_difference('new_user.orgas.count') do
+        assert_no_difference('@user.orgas.count') do
           assert_raise UserIsAlreadyMemberException do
-            orga.add_new_member(new_member: new_user, admin: @user)
+            orga.add_new_member(new_member: @user, admin: @admin)
           end
         end
       end
+
+      assert_no_difference('orga.users.count') do
+        assert_no_difference('@user.orgas.count') do
+          assert_raise UserIsAlreadyMemberException do
+            orga.add_new_member(new_member: @admin, admin: @admin)
+          end
+        end
+      end
+
     end
   end
 
