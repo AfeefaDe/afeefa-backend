@@ -76,6 +76,8 @@ Rails.application.routes.draw do
           delete :remove_member, path: 'users/:user_id'
           put :promote_member, path: 'users/:user_id/promote'
           put :demote_admin, path: 'users/:user_id/demote'
+          patch :activate
+          patch :deactivate
         end
       end
     end

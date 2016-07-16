@@ -40,4 +40,9 @@ class Orga < ActiveRecord::Base
     self.update(data)
   end
 
+  def change_active_state(admin:, active:)
+    admin.can? :write_orga_structure, self, 'You are not authorized to modify the state of this organization!'
+    self.update(active: active)
+  end
+
 end

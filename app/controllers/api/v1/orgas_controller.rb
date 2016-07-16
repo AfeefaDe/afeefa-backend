@@ -54,6 +54,16 @@ class Api::V1::OrgasController < Api::V1::BaseController
     render json: @orga
   end
 
+  def activate
+    @orga.change_active_state(admin: current_api_v1_user, active: true)
+    head status: :no_content
+  end
+
+  def deactivate
+    @orga.change_active_state(admin: current_api_v1_user, active: false)
+    head status: :no_content
+  end
+
   private
 
   def user_params
