@@ -4,4 +4,5 @@ class UserSerializer < BaseSerializer
   attribute 'forename'
   attribute 'surname'
 
+  has_many :orgas
 end
