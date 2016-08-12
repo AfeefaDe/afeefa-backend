@@ -138,28 +138,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :no_content
       end
     end
-
-    should 'I must not create a new member in a not existing orga' do
-      assert_no_difference 'User.count' do
-        post :create_member, id: 'not existing id', user: @user_json
-        assert_response :not_found
-      end
-    end
-
-    should 'I must not create a new member in an orga I am no admin in' do
-      assert_no_difference 'User.count' do
-        post :create_member, id: create(:another_orga).id, user: @user_json
-        assert_response :forbidden
-      end
-    end
-
-    should 'I must not create a new user that already exists' do
-      user = create(:user)
-      assert_no_difference 'User.count' do
-        post :create_member, id: @orga.id, user: { forename: 'a', surname: 'b', email: user.email }
-        assert_response :unprocessable_entity
-      end
-    end
   end
 
   context 'As member' do
