@@ -1,4 +1,7 @@
 class Orga < ActiveRecord::Base
+  acts_as_tree
+  alias_method :suborgas, :children
+  alias_method :parent_orga, :parent
 
   has_many :roles
   has_many :users, through: :roles
@@ -27,6 +30,18 @@ class Orga < ActiveRecord::Base
       raise OrgaIsAlreadySuborgaException
     else
       suborgas << new_suborga
+    end
+  end
+
+  def add_new_suborga(new_suborga:, admin:)
+    if admin.orga_admin?(self)
+      if suborgas.include?(new_suborga)
+        raise OrgaIsAlreadySuborgaException
+      else
+        suborgas << new_suborga
+      end
+    else
+      raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, admin)
     end
   end
 

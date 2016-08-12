@@ -86,6 +86,17 @@ ActiveRecord::Schema.define(version: 20160716105402) do
   add_index "orga_category_relations", ["category_id"], name: "index_orga_category_relations_on_category_id"
   add_index "orga_category_relations", ["orga_id"], name: "index_orga_category_relations_on_orga_id"
 
+  create_table "orga_suborga_relations", force: :cascade do |t|
+    t.integer  "orga_id"
+    t.integer  "suborga_id"
+    t.string   "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "orga_suborga_relations", ["orga_id"], name: "index_orga_suborga_relations_on_orga_id"
+  add_index "orga_suborga_relations", ["suborga_id"], name: "index_orga_suborga_relations_on_suborga_id"
+
   create_table "orgas", force: :cascade do |t|
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
@@ -95,6 +106,7 @@ ActiveRecord::Schema.define(version: 20160716105402) do
     t.boolean  "support_wanted"
     t.string   "api_access"
     t.string   "api_key"
+    t.integer  "parent_id"
     t.boolean  "active",         default: true
   end
 
