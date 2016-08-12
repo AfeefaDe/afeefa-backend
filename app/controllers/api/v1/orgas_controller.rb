@@ -2,7 +2,8 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   before_action :set_orga
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin, :add_member]
-  before_action :check_curr_user, only: [:update, :list_members]
+  before_action :ensure_user_belongs_to_orga, only: [:update, :list_members]
+  before_action :set_suborga, only: [:add_suborga]
 
   def create_member
     begin
@@ -55,6 +56,11 @@ class Api::V1::OrgasController < Api::V1::BaseController
     render json: @orga
   end
 
+  def add_suborga
+    @orga.add_new_suborga(new_suborga: @suborga, admin: current_api_v1_user)
+    head :no_content
+  end
+
   private
 
   def user_params
@@ -73,9 +79,13 @@ class Api::V1::OrgasController < Api::V1::BaseController
     @user = User.find(params[:user_id])
   end
 
-  def check_curr_user
+  def ensure_user_belongs_to_orga
     unless current_api_v1_user && current_api_v1_user.belongs_to_orga?(@orga)
       head status: :forbidden
     end
+  end
+
+  def set_suborga
+    @suborga = Orga.find(params[:suborga_id])
   end
 end

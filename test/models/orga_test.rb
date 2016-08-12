@@ -90,6 +90,56 @@ class OrgaTest < ActiveSupport::TestCase
       end
 
     end
+
+    should 'have associated orgas' do
+      orga = create(:orga)
+      another_orga = create(:another_orga)
+
+      assert_empty orga.suborgas
+      assert_empty another_orga.suborgas
+
+      orga.suborgas << another_orga
+      orga.reload.suborgas
+      assert_includes orga.reload.suborgas, another_orga
+      assert_equal orga, another_orga.reload.parent_orga
+    end
+
+    should 'I want to add a new suborga to my orga' do
+      new_orga = create(:orga)
+      orga = @user.orgas.first
+
+      assert_difference('orga.suborgas.count') do
+        orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+      end
+
+      assert_equal(orga, new_orga.reload.parent_orga)
+    end
+
+    should 'I must not add a new suborga to a foreign orga' do
+      new_orga = create(:orga)
+      orga = create(:another_orga)
+
+      assert_no_difference('orga.suborgas.count') do
+        assert_raise CanCan::AccessDenied do
+          orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+        end
+      end
+
+      assert_nil new_orga.reload.parent_orga
+    end
+
+    should 'I must not add the same suborga to my orga again' do
+      new_orga = create(:orga)
+      orga = @user.orgas.first
+
+      orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+
+      assert_no_difference('orga.suborgas.count') do
+        assert_raise OrgaIsAlreadySuborgaException do
+          orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+        end
+      end
+    end
   end
 
 end

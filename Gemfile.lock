@@ -36,6 +36,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    acts_as_tree (2.4.0)
+      activerecord (>= 3.0.0)
     addressable (2.4.0)
     airbrake (5.4.1)
       airbrake-ruby (~> 1.4)
@@ -250,6 +252,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
+  acts_as_tree (~> 2.4)
   airbrake (~> 5.3)
   bcrypt (~> 3.1.7)
   better_errors

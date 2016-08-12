@@ -73,6 +73,7 @@ Rails.application.routes.draw do
           get :list_members, path: 'users'
           post :create_member, path: 'users'
           put :add_member, path: 'users/:user_id'
+          put :add_suborga, path: 'users/:suborga_id'
           delete :remove_member, path: 'users/:user_id'
           put :promote_member, path: 'users/:user_id/promote'
           put :demote_admin, path: 'users/:user_id/demote'
