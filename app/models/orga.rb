@@ -45,4 +45,14 @@ class Orga < ActiveRecord::Base
     self.update(active: active)
   end
 
+  def delete_orga(admin:)
+    unless admin.can?(:write_orga_structure, self, 'You are not authorized to delete this organization including all its entries!')
+      self.change_active_state(admin: admin, active: false)
+      # find out if orga is a suborga
+      Orga.find(self.id).destroy
+      return false
+    end
+  end
+
+
 end

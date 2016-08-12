@@ -88,8 +88,26 @@ class OrgaTest < ActiveSupport::TestCase
           end
         end
       end
-
     end
+
+    should 'I want to delete an orga and all its entries' do
+      # setting up an additional orga that can be deleted right after
+      temp_orga = create(:orga)
+      #suborga = creae(:orga)
+      role = Role.new(title: Role::ORGA_ADMIN, orga: temp_orga, user: @admin)
+      role.save
+
+      assert_raise CanCan::AccessDenied do
+        temp_orga.delete_orga(admin: @user)
+      end
+
+      temp_orga.delete_orga(admin: @admin)
+      assert true, temp_orga.destroyed?
+      #assert true, suborga.destroyed?
+      assert_not @admin.destroyed?
+      assert_not @user.destroyed?
+    end
+
   end
 
 end
