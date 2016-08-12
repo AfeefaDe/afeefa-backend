@@ -25,7 +25,7 @@ FactoryGirl.define do
       email 'member@afeefa.de'
 
       transient do
-        orga nil
+        orga {build(:orga)}
       end
 
       after(:build) do |member, evaluator|

@@ -123,10 +123,10 @@ class OrgaTest < ActiveSupport::TestCase
 
     should 'I want to add a new suborga to my orga' do
       new_orga = create(:orga)
-      orga = @user.orgas.first
+      orga = @admin.orgas.first
 
       assert_difference('orga.suborgas.count') do
-        orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+        orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
       end
 
       assert_equal(orga, new_orga.reload.parent_orga)
@@ -147,13 +147,13 @@ class OrgaTest < ActiveSupport::TestCase
 
     should 'I must not add the same suborga to my orga again' do
       new_orga = create(:orga)
-      orga = @user.orgas.first
+      orga = @admin.orgas.first
 
-      orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+      orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
 
       assert_no_difference('orga.suborgas.count') do
         assert_raise OrgaIsAlreadySuborgaException do
-          orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+          orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
         end
       end
     end
