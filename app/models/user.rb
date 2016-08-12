@@ -16,6 +16,12 @@ class User < ActiveRecord::Base
 
   has_many :created_market_entries, class_name: 'MarketEntry', foreign_key: :creator_id
 
+  def can?(ability, subject, message)
+    unless abilities.can? ability, subject
+      raise CanCan::AccessDenied.new(message, caller_locations(1, 1)[0].label)
+    end
+  end
+
   def orga_member?(orga)
     has_role_for?(orga, Role::ORGA_MEMBER)
   end
@@ -25,12 +31,10 @@ class User < ActiveRecord::Base
   end
 
   def create_user_and_add_to_orga(email:, forename:, surname:, orga:)
-    if orga_admin?(orga)
-      new_user = User.create!(email: email, forename: forename, surname: surname, password: 'abc12345')
-      orga.add_new_member(new_member: new_user, admin: self)
-    else
-      raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, self)
-    end
+    can? :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
+
+    new_user = User.create!(email: email, forename: forename, surname: surname, password: 'abc12345')
+    orga.add_new_member(new_member: new_user, admin: self)
   end
 
   def leave_orga(orga:)
@@ -41,9 +45,7 @@ class User < ActiveRecord::Base
   end
 
   def remove_user_from_orga(member:, orga:)
-    unless orga_admin?(orga)
-      raise CanCan::AccessDenied.new('no permission to remove user', __method__, self)
-    end
+    can? :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
     member.leave_orga(orga: orga)
   end
 
@@ -71,6 +73,10 @@ class User < ActiveRecord::Base
 
   private
 
+  def abilities
+    @ability ||= Ability.new(self)
+  end
+
   def has_role_for?(orga, role)
     if belongs_to_orga?(orga)
       roles.where(orga_id: orga.id).first.try(:title) == role
@@ -80,10 +86,7 @@ class User < ActiveRecord::Base
   end
 
   def update_role_for_member(member:, orga:, role:)
-    unless orga_admin?(orga)
-      raise CanCan::AccessDenied.new('no permission to modify user', __method__, self)
-    end
-
+    can? :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
     current_role = Role.find_by(orga: orga, user: member)
     if current_role.nil?
       raise ActiveRecord::RecordNotFound.new('user not in orga!')

@@ -62,7 +62,7 @@ Rails.application.routes.draw do
 
       mount_devise_token_auth_for 'User', at: 'users'
 
-      resources :users, only: [] do
+      resources :users, only: [:show] do
         member do
           get :list_orgas, path: 'orgas'
         end
@@ -77,6 +77,8 @@ Rails.application.routes.draw do
           delete :remove_member, path: 'users/:user_id'
           put :promote_member, path: 'users/:user_id/promote'
           put :demote_admin, path: 'users/:user_id/demote'
+          patch :activate
+          patch :deactivate
         end
       end
     end

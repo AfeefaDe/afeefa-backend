@@ -20,6 +20,42 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_equal @user_json[:email], @orga.users.last.email
     end
 
+    should 'I must not create a new member in a not existing orga' do
+      assert_no_difference 'User.count' do
+        post :create_member, id: 'not existing id', user: @user_json
+        assert_response :not_found
+      end
+    end
+
+    should 'I must not create a new member in an orga I am no admin in' do
+      assert_no_difference 'User.count' do
+        post :create_member, id: create(:another_orga).id, user: @user_json
+        assert_response :forbidden
+      end
+    end
+
+    should 'I must not create a new user that already exists' do
+      @user = create(:user)
+      assert_no_difference 'User.count' do
+        post :create_member, id: @orga.id, user: {forename: 'a', surname: 'b', email: @user.email}
+        assert_response :unprocessable_entity
+      end
+    end
+
+    should 'I want to activate my orga' do
+      patch :activate, id: @orga.id
+      assert_response :no_content
+      @orga.reload
+      assert_equal true, @orga[:active]
+    end
+
+    should 'I want to deactivate my orga' do
+      patch :deactivate, id: @orga.id
+      assert_response :no_content
+      @orga.reload
+      assert_equal false, @orga[:active]
+    end
+
     context 'interacting with a member' do
       setup do
         @member = create(:member, orga: @admin.orgas.first)
@@ -173,6 +209,22 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_equal @orga[:logo], 'newLogo.png'
       assert_equal @orga[:description], desc
     end
+
+    should 'I must not activate my orga' do
+      active = @orga[:active]
+      patch :activate, id: @orga.id
+      assert_response :forbidden
+      @orga.reload
+      assert_equal @orga[:active], active
+    end
+
+    should 'I must not deactivate my orga' do
+      active = @orga[:active]
+      patch :deactivate, id: @orga.id
+      assert_response :forbidden
+      @orga.reload
+      assert_equal @orga[:active], active
+    end
   end
 
   context 'As user' do
@@ -197,6 +249,22 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_not_equal @orga[:logo], 'newLogo.png'
       assert_equal @orga[:description], desc
       assert_in_delta @orga[:updated_at], upd, 0.0001
+    end
+
+    should 'I must not activate some orga' do
+      active = @orga[:active]
+      patch :activate, id: @orga.id
+      assert_response :forbidden
+      @orga.reload
+      assert_equal @orga[:active], active
+    end
+
+    should 'I must not deactivate some orga' do
+      active = @orga[:active]
+      patch :deactivate, id: @orga.id
+      assert_response :forbidden
+      @orga.reload
+      assert_equal @orga[:active], active
     end
   end
 

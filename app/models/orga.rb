@@ -15,27 +15,21 @@ class Orga < ActiveRecord::Base
   validates_length_of :title, minimum: 5
 
   def add_new_member(new_member:, admin:)
-    if admin.orga_admin?(self)
-      if new_member.belongs_to_orga?(self)
-        raise UserIsAlreadyMemberException
-      else
-        Role.create!(user: new_member, orga: self, title: Role::ORGA_MEMBER)
-        return new_member
-      end
+    admin.can? :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
+    if new_member.belongs_to_orga?(self)
+      raise UserIsAlreadyMemberException
     else
-      raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, admin)
+      Role.create!(user: new_member, orga: self, title: Role::ORGA_MEMBER)
+      return new_member
     end
   end
 
   def add_new_suborga(new_suborga:, admin:)
-    if admin.orga_admin?(self)
-      if suborgas.include?(new_suborga)
-        raise OrgaIsAlreadySuborgaException
-      else
-        suborgas << new_suborga
-      end
+    admin.can? :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
+    if suborgas.include?(new_suborga)
+      raise OrgaIsAlreadySuborgaException
     else
-      raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, admin)
+      suborgas << new_suborga
     end
   end
 
@@ -52,11 +46,18 @@ class Orga < ActiveRecord::Base
   end
 
   def list_members(member:)
-    if member.belongs_to_orga?(self)
-      return users
-    else
-      raise CanCan::AccessDenied.new('user is not member of this orga', __method__, member)
-    end
+    member.can? :read_orga, self, 'You are not authorized to access the data of this organization!'
+    users
+  end
+
+  def update_data(member:, data:)
+    member.can? :write_orga_data, self, 'You are not authorized to modify the data of this organization!'
+    self.update(data)
+  end
+
+  def change_active_state(admin:, active:)
+    admin.can? :write_orga_structure, self, 'You are not authorized to modify the state of this organization!'
+    self.update(active: active)
   end
 
 end

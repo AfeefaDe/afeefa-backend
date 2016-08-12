@@ -52,13 +52,23 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def update
-    @orga.update(orga_params[:attributes])
+    @orga.update_data(member: current_api_v1_user, data: orga_params[:attributes])
     render json: @orga
   end
 
   def add_suborga
     @orga.add_new_suborga(new_suborga: @suborga, admin: current_api_v1_user)
     head :no_content
+  end
+
+  def activate
+    @orga.change_active_state(admin: current_api_v1_user, active: true)
+    head status: :no_content
+  end
+
+  def deactivate
+    @orga.change_active_state(admin: current_api_v1_user, active: false)
+    head status: :no_content
   end
 
   private
@@ -68,7 +78,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def orga_params
-    params.require(:data).permit(:id , :type, :attributes => [:title, :description, :logo])
+    params.require(:data).permit(:id, :type, :attributes => [:title, :description, :logo])
   end
 
   def set_orga

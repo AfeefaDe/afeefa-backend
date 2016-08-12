@@ -7,4 +7,5 @@ class OrgaSerializer < BaseSerializer
   attribute 'created_at'
   attribute 'updated_at'
 
+  has_many :users
 end
