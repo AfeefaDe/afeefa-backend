@@ -5,6 +5,10 @@ class Api::V1::OrgasController < Api::V1::BaseController
   before_action :ensure_user_belongs_to_orga, only: [:update, :list_members]
   before_action :set_suborga, only: [:add_suborga]
 
+  def show
+    render json: serialize(@orga)
+  end
+
   def create_member
     begin
       new_member =

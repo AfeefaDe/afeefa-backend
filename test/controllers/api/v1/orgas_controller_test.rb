@@ -244,6 +244,12 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       @orga.reload
       assert_equal @orga[:active], active
     end
+
+    should 'show orga' do
+      post :show, id: @orga.id
+      expected = OrgaSerializer.serialize(@orga, is_collection: false).to_json
+      assert_equal expected, response.body
+    end
   end
 
 end
