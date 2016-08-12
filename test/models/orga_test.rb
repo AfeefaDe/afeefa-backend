@@ -90,24 +90,6 @@ class OrgaTest < ActiveSupport::TestCase
       end
     end
 
-    should 'I want to delete an orga and all its entries' do
-      # setting up an additional orga that can be deleted right after
-      temp_orga = create(:orga)
-      #suborga = creae(:orga)
-      role = Role.new(title: Role::ORGA_ADMIN, orga: temp_orga, user: @admin)
-      role.save
-
-      assert_raise CanCan::AccessDenied do
-        temp_orga.delete_orga(admin: @user)
-      end
-
-      temp_orga.delete_orga(admin: @admin)
-      assert true, temp_orga.destroyed?
-      #assert true, suborga.destroyed?
-      assert_not @admin.destroyed?
-      assert_not @user.destroyed?
-    end
-
     should 'have associated orgas' do
       orga = create(:orga)
       another_orga = create(:another_orga)
@@ -158,6 +140,21 @@ class OrgaTest < ActiveSupport::TestCase
       end
     end
 
+    should 'I want to delete a parent_orga without deleting suborgas' do
+      parent_orga = create(:orga)
+      middle_orga = create(:orga_with_admin, parent_orga: parent_orga)
+      last_orga = create(:orga, parent_orga: middle_orga)
+      User.current = middle_orga.admins.reload.first
+
+      assert_includes(parent_orga.suborgas, middle_orga)
+      assert_includes(middle_orga.suborgas, last_orga)
+
+      middle_orga.destroy
+      assert_equal parent_orga.id, last_orga.reload.parent_id
+      pp Orga.all
+
+      assert_includes(parent_orga.reload.suborgas, last_orga)
+    end
   end
 
 end
