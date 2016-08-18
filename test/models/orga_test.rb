@@ -88,7 +88,6 @@ class OrgaTest < ActiveSupport::TestCase
           end
         end
       end
-
     end
 
     should 'have associated orgas' do
@@ -106,10 +105,10 @@ class OrgaTest < ActiveSupport::TestCase
 
     should 'I want to add a new suborga to my orga' do
       new_orga = create(:orga)
-      orga = @user.orgas.first
+      orga = @admin.orgas.first
 
       assert_difference('orga.suborgas.count') do
-        orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+        orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
       end
 
       assert_equal(orga, new_orga.reload.parent_orga)
@@ -130,15 +129,31 @@ class OrgaTest < ActiveSupport::TestCase
 
     should 'I must not add the same suborga to my orga again' do
       new_orga = create(:orga)
-      orga = @user.orgas.first
+      orga = @admin.orgas.first
 
-      orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+      orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
 
       assert_no_difference('orga.suborgas.count') do
         assert_raise OrgaIsAlreadySuborgaException do
-          orga.add_new_suborga(new_suborga: new_orga, admin: @user)
+          orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
         end
       end
+    end
+
+    should 'I want to delete a parent_orga without deleting suborgas' do
+      parent_orga = create(:orga)
+      middle_orga = create(:orga_with_admin, parent_orga: parent_orga)
+      last_orga = create(:orga, parent_orga: middle_orga)
+      User.current = middle_orga.admins.reload.first
+
+      assert_includes(parent_orga.suborgas, middle_orga)
+      assert_includes(middle_orga.suborgas, last_orga)
+
+      middle_orga.destroy
+      assert_equal parent_orga.id, last_orga.reload.parent_id
+
+      assert_includes(parent_orga.reload.suborgas, last_orga)
+      assert middle_orga.destroyed?
     end
   end
 
