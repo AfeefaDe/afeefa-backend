@@ -1,9 +1,11 @@
 class Orga < ActiveRecord::Base
+  include Owner
+
   acts_as_tree(dependent: :restrict_with_exception)
-  alias_method :suborgas, :children
+  alias_method :sub_orgas, :children
   alias_method :parent_orga, :parent
   alias_method :parent_orga=, :parent=
-  alias_method :suborgas=, :children=
+  alias_method :sub_orgas=, :children=
 
   has_many :roles
   has_many :users, through: :roles
@@ -18,7 +20,7 @@ class Orga < ActiveRecord::Base
   validates_length_of :title, minimum: 5
 
   before_destroy :check_destroy_right, prepend: true
-  before_destroy :move_suborgas, prepend: true
+  before_destroy :move_sub_orgas, prepend: true
 
   def add_new_member(new_member:, admin:)
     admin.can? :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
@@ -32,19 +34,19 @@ class Orga < ActiveRecord::Base
 
   def add_new_suborga(new_suborga:, admin:)
     admin.can? :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
-    if suborgas.include?(new_suborga)
+    if sub_orgas.include?(new_suborga)
       raise OrgaIsAlreadySuborgaException
     else
-      suborgas << new_suborga
+      sub_orgas << new_suborga
     end
   end
 
   def add_new_suborga(new_suborga:, admin:)
     if admin.orga_admin?(self)
-      if suborgas.include?(new_suborga)
+      if sub_orgas.include?(new_suborga)
         raise OrgaIsAlreadySuborgaException
       else
-        suborgas << new_suborga
+        sub_orgas << new_suborga
       end
     else
       raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, admin)
@@ -70,8 +72,8 @@ class Orga < ActiveRecord::Base
     User.current.can? :write_orga_structure, self, 'You are not authorized to delete this organization!'
   end
 
-  def move_suborgas
-    suborgas.each do |suborga|
+  def move_sub_orgas
+    sub_orgas.each do |suborga|
        suborga.parent_orga = parent_orga
        suborga.save!
     end

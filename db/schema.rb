@@ -11,17 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160716105402) do
+ActiveRecord::Schema.define(version: 20160818145113) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "title"
     t.string   "type"
-    t.integer  "meta_category_id"
+    t.integer  "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "categories", ["parent_id"], name: "index_categories_on_parent_id"
+
+  create_table "contact_infos", force: :cascade do |t|
+    t.string   "contact_person"
+    t.string   "phone"
+    t.string   "mail"
+    t.string   "website"
+    t.string   "place_name"
+    t.string   "street"
+    t.string   "zip"
+    t.string   "city"
+    t.string   "district"
+    t.integer  "contactable_id"
+    t.string   "contactable_type"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
   end
 
-  add_index "categories", ["meta_category_id"], name: "index_categories_on_meta_category_id"
+  add_index "contact_infos", ["contactable_type", "contactable_id"], name: "index_contact_infos_on_contactable_type_and_contactable_id"
 
   create_table "events", force: :cascade do |t|
     t.string   "title"
@@ -33,7 +51,7 @@ ActiveRecord::Schema.define(version: 20160716105402) do
     t.datetime "deactivated_at"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
-    t.integer  "meta_event_id"
+    t.integer  "parent_id"
   end
 
   create_table "languages", force: :cascade do |t|
@@ -85,17 +103,6 @@ ActiveRecord::Schema.define(version: 20160716105402) do
 
   add_index "orga_category_relations", ["category_id"], name: "index_orga_category_relations_on_category_id"
   add_index "orga_category_relations", ["orga_id"], name: "index_orga_category_relations_on_orga_id"
-
-  create_table "orga_suborga_relations", force: :cascade do |t|
-    t.integer  "orga_id"
-    t.integer  "suborga_id"
-    t.string   "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "orga_suborga_relations", ["orga_id"], name: "index_orga_suborga_relations_on_orga_id"
-  add_index "orga_suborga_relations", ["suborga_id"], name: "index_orga_suborga_relations_on_suborga_id"
 
   create_table "orgas", force: :cascade do |t|
     t.datetime "created_at",                    null: false

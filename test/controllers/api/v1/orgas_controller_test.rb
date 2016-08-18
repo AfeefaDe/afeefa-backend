@@ -132,7 +132,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         @suborga = create(:another_orga)
       end
 
-      should 'I want to add an existing orga to suborgas of my orga' do
+      should 'I want to add an existing orga to sub_orgas of my orga' do
         Orga.any_instance.expects(:add_new_suborga).once
         put :add_suborga, id: @orga.id, suborga_id: @suborga.id
         assert_response :no_content
@@ -170,7 +170,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       end
     end
 
-    should 'I must not add an existing orga to suborgas of my orga' do
+    should 'I must not add an existing orga to sub_orgas of my orga' do
       suborga = create(:another_orga)
       assert_no_difference('@orga.users.count') do
         put :add_suborga, id: @orga.id, suborga_id: suborga.id
