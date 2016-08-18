@@ -151,9 +151,9 @@ class OrgaTest < ActiveSupport::TestCase
 
       middle_orga.destroy
       assert_equal parent_orga.id, last_orga.reload.parent_id
-      pp Orga.all
 
       assert_includes(parent_orga.reload.suborgas, last_orga)
+      assert middle_orga.destroyed?
     end
   end
 
