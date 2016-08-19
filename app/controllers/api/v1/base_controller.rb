@@ -55,9 +55,4 @@ class Api::V1::BaseController < ApplicationController
     end
   end
 
-  def serialize(model, **options)
-    options[:is_collection] = model.respond_to?(:each) && !model.respond_to?(:each_pair)
-    JSONAPI::Serializer.serialize(model, options)
-  end
-
 end

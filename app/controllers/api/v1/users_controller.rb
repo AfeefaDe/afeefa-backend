@@ -5,7 +5,7 @@ class Api::V1::UsersController < Api::V1::BaseController
   def list_orgas
     if current_api_v1_user == @user
       orgas = Role.where(user: @user).map(&:orga)
-      render json: serialize(orgas)
+      render json: orgas
     else
       head status: :forbidden
     end
@@ -13,7 +13,7 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   def show
     if current_api_v1_user == @user
-      render json: serialize(current_api_v1_user)
+      render json: current_api_v1_user
     else
       head status: :forbidden
     end

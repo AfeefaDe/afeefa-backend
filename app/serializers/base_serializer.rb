@@ -1,7 +1,3 @@
-class BaseSerializer
-  include JSONAPI::Serializer
+class BaseSerializer < ActiveModel::Serializer
 
-  def self_link
-    "/api/v1#{super}"
-  end
 end

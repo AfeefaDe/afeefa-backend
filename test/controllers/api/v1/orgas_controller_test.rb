@@ -154,7 +154,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     should 'render json api spec for user list' do
       get :list_members, id: @orga.id
       assert_response :ok
-      expected = UserSerializer.serialize([@member], is_collection: true).to_json
+      expected = ActiveModelSerializers::SerializableResource.new([@member], {}).to_json
       assert_equal expected, response.body
     end
 
@@ -247,7 +247,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'show orga' do
       post :show, id: @orga.id
-      expected = OrgaSerializer.serialize(@orga, is_collection: false).to_json
+      expected = ActiveModelSerializers::SerializableResource.new(@orga, {}).to_json
       assert_equal expected, response.body
     end
   end

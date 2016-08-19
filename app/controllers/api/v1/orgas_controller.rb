@@ -6,7 +6,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
   before_action :set_suborga, only: [:add_suborga]
 
   def show
-    render json: serialize(@orga)
+    render json: @orga
   end
 
   def create_member
@@ -18,7 +18,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
               surname: user_params[:surname],
               email: user_params[:email]
           )
-      render json: serialize(new_member)
+      render json: new_member
       head status: :created
     rescue ActiveRecord::RecordInvalid
       head status: :unprocessable_entity
@@ -52,7 +52,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   def list_members
     members = @orga.list_members(member: current_api_v1_user)
-    render json: serialize(members)
+    render json: members
   end
 
   def update
