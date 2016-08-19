@@ -62,6 +62,9 @@ gem 'active_model_serializers'
 # tree relatiions (e.g. orga-suborga)
 gem 'acts_as_tree', '~> 2.4'
 
+# pagination
+gem 'kaminari'
+
 # redmine integration
 gem 'airbrake', '~> 5.3'
 

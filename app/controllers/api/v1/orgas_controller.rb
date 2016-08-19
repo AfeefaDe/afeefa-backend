@@ -1,12 +1,22 @@
 class Api::V1::OrgasController < Api::V1::BaseController
 
-  before_action :set_orga
+  before_action :set_orga, except: [:index]
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin, :add_member]
   before_action :ensure_user_belongs_to_orga, only: [:update, :list_members]
   before_action :set_suborga, only: [:add_suborga]
 
   def show
     render json: @orga
+  end
+
+  def index
+    if orgas_params[:page]
+      @orgas = Orga.page(orgas_params[:page][:number]).per(orgas_params[:page][:size])
+    else
+      @orgas = Orga.all
+    end
+
+    render json: @orgas
   end
 
   def create_member
@@ -83,6 +93,10 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   def orga_params
     params.require(:data).permit(:id, :type, :attributes => [:title, :description, :logo])
+  end
+
+  def orgas_params
+    params.permit(:page => [:number, :size])
   end
 
   def set_orga
