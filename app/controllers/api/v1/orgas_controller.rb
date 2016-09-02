@@ -2,7 +2,6 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   before_action :set_orga, except: [:index, :create]
   before_action :set_user, only: [:remove_member, :promote_member, :demote_admin, :add_member]
-  before_action :ensure_user_belongs_to_orga, only: [:update, :list_members]
   before_action :set_suborga, only: [:add_suborga]
 
   def show
@@ -116,12 +115,6 @@ class Api::V1::OrgasController < Api::V1::BaseController
 
   def set_user
     @user = User.find(params[:user_id])
-  end
-
-  def ensure_user_belongs_to_orga
-    unless current_api_v1_user && current_api_v1_user.belongs_to_orga?(@orga)
-      head status: :forbidden
-    end
   end
 
   def set_suborga
