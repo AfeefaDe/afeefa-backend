@@ -9,19 +9,12 @@ class UserTest < ActiveSupport::TestCase
     should 'have some basic attributes not nil' do
       assert @user.respond_to? :password
       assert @user.has_attribute? :email
-      assert @user.has_attribute? :registered_at
 
     end
 
     should 'have some basic attributes' do
-      assert @user.has_attribute? :access_token
       assert @user.has_attribute? :forename
       assert @user.has_attribute? :surname
-      assert @user.has_attribute? :last_sign_in_at
-      assert @user.has_attribute? :gender
-      assert @user.has_attribute? :degree
-      assert @user.has_attribute? :activated_at
-      assert @user.has_attribute? :enabled_at
     end
 
     should 'have orgas' do

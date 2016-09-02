@@ -10,7 +10,7 @@ class Orga < ActiveRecord::Base
   has_many :roles, dependent: :destroy
   has_many :users, through: :roles
   has_many :admins, ->{where(roles: {title: Role::ORGA_ADMIN})}, through: :roles, source: :user
-  has_many :locations
+  has_many :locations, as: :locatable
 
   has_and_belongs_to_many :categories, join_table: 'orga_category_relations'
 
@@ -22,7 +22,7 @@ class Orga < ActiveRecord::Base
   before_destroy :move_sub_orgas_to_parent, prepend: true
 
   def add_new_member(new_member:, admin:)
-    admin.can? :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
+    admin.can! :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
     if new_member.belongs_to_orga?(self)
       raise UserIsAlreadyMemberException
     else
@@ -32,7 +32,7 @@ class Orga < ActiveRecord::Base
   end
 
   def create_suborga(admin:, params:)
-    admin.can? :write_orga_structure, self, 'You are not authorized to modify the structure of this organization!'
+    admin.can! :write_orga_structure, self, 'You are not authorized to modify the structure of this organization!'
     title = params[:title]
     description = params[:description]
     suborga = Orga.create!(title: title, description: description)
@@ -41,17 +41,17 @@ class Orga < ActiveRecord::Base
   end
 
   def list_members(member:)
-    member.can? :read_orga, self, 'You are not authorized to access the data of this organization!'
+    member.can! :read_orga, self, 'You are not authorized to access the data of this organization!'
     users
   end
 
   def update_data(member:, data:)
-    member.can? :write_orga_data, self, 'You are not authorized to modify the data of this organization!'
+    member.can! :write_orga_data, self, 'You are not authorized to modify the data of this organization!'
     self.update(data)
   end
 
   def change_active_state(admin:, active:)
-    admin.can? :write_orga_structure, self, 'You are not authorized to modify the state of this organization!'
+    admin.can! :write_orga_structure, self, 'You are not authorized to modify the state of this organization!'
     self.update(active: active)
   end
 

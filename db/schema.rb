@@ -24,19 +24,10 @@ ActiveRecord::Schema.define(version: 20160818145113) do
   add_index "categories", ["parent_id"], name: "index_categories_on_parent_id"
 
   create_table "contact_infos", force: :cascade do |t|
-    t.string   "contact_person"
-    t.string   "phone"
-    t.string   "mail"
-    t.string   "website"
-    t.string   "place_name"
-    t.string   "street"
-    t.string   "zip"
-    t.string   "city"
-    t.string   "district"
-    t.integer  "contactable_id"
-    t.string   "contactable_type"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.string  "type"
+    t.string  "content"
+    t.integer "contactable_id"
+    t.string  "contactable_type"
   end
 
   add_index "contact_infos", ["contactable_type", "contactable_id"], name: "index_contact_infos_on_contactable_type_and_contactable_id"
@@ -53,19 +44,28 @@ ActiveRecord::Schema.define(version: 20160818145113) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.integer  "parent_id"
+    t.datetime "date"
   end
 
   create_table "locations", force: :cascade do |t|
     t.string   "lat"
     t.string   "lon"
-    t.string   "osm_id"
-    t.string   "scope"
-    t.string   "order"
+    t.string   "street"
+    t.string   "number"
+    t.string   "addition"
+    t.string   "zip"
+    t.string   "city"
+    t.string   "district"
+    t.string   "state"
+    t.string   "country"
     t.boolean  "displayed"
-    t.integer  "orga_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "locatable_id"
+    t.string   "locatable_type"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
+
+  add_index "locations", ["locatable_type", "locatable_id"], name: "index_locations_on_locatable_type_and_locatable_id"
 
   create_table "orga_category_relations", force: :cascade do |t|
     t.integer  "category_id"
@@ -79,16 +79,12 @@ ActiveRecord::Schema.define(version: 20160818145113) do
   add_index "orga_category_relations", ["orga_id"], name: "index_orga_category_relations_on_orga_id"
 
   create_table "orgas", force: :cascade do |t|
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.string   "title"
     t.text     "description"
-    t.string   "logo"
-    t.boolean  "support_wanted"
-    t.string   "api_access"
-    t.string   "api_key"
     t.integer  "parent_id"
-    t.boolean  "active",         default: true
+    t.boolean  "active",      default: true
   end
 
   create_table "owner_thing_relations", force: :cascade do |t|
@@ -139,14 +135,8 @@ ActiveRecord::Schema.define(version: 20160818145113) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
-    t.string   "access_token"
     t.string   "forename"
     t.string   "surname"
-    t.integer  "gender"
-    t.string   "degree"
-    t.datetime "registered_at"
-    t.datetime "activated_at"
-    t.datetime "enabled_at"
     t.string   "provider",               default: "email", null: false
     t.string   "uid",                    default: "",      null: false
     t.text     "tokens"

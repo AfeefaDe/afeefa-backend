@@ -15,6 +15,7 @@ class CreateEvents < ActiveRecord::Migration
 
       # event specific data
       t.integer :meta_event_id
+      t.datetime :date
     end
   end
 end

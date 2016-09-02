@@ -16,10 +16,14 @@ class User < ActiveRecord::Base
 
   has_many :created_events, class_name: 'Event', foreign_key: :creator_id
 
-  def can?(ability, subject, message)
+  def can!(ability, subject, message)
     unless abilities.can? ability, subject
       raise CanCan::AccessDenied.new(message, caller_locations(1, 1)[0].label)
     end
+  end
+
+  def can?(ability, subject)
+    abilities.can? ability, subject
   end
 
   def orga_member?(orga)
@@ -31,7 +35,7 @@ class User < ActiveRecord::Base
   end
 
   def create_user_and_add_to_orga(email:, forename:, surname:, orga:)
-    can? :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
+    can! :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
 
     new_user = User.create!(email: email, forename: forename, surname: surname, password: 'abc12345')
     orga.add_new_member(new_member: new_user, admin: self)
@@ -45,7 +49,7 @@ class User < ActiveRecord::Base
   end
 
   def remove_user_from_orga(member:, orga:)
-    can? :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
+    can! :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
     member.leave_orga(orga: orga)
   end
 
@@ -86,7 +90,7 @@ class User < ActiveRecord::Base
   end
 
   def update_role_for_member(member:, orga:, role:)
-    can? :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
+    can! :write_orga_structure, orga, 'You are not authorized to modify the user list of this organization!'
     current_role = Role.find_by(orga: orga, user: member)
     if current_role.nil?
       raise ActiveRecord::RecordNotFound.new('user not in orga!')

@@ -9,8 +9,6 @@ class Category < ActiveRecord::Base
   has_and_belongs_to_many :orgas, join_table: 'orga_category_relations'
 
   has_many :thing_category_relations
-  has_many :market_entries, through: :thing_category_relations, source: :catable, source_type: 'MarketEntry'
   has_many :events, through: :thing_category_relations, source: :catable, source_type: 'Event'
-  has_many :pois, through: :thing_category_relations, source: :catable, source_type: 'Poi'
 
 end

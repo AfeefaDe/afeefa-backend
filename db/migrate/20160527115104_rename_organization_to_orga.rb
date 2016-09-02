@@ -5,6 +5,5 @@ class RenameOrganizationToOrga < ActiveRecord::Migration
 
     rename_column :roles, :organization_id, :orga_id
     rename_column :orga_category_relations, :organization_id, :orga_id
-    rename_column :locations, :organization_id, :orga_id
   end
 end
