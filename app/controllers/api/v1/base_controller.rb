@@ -18,6 +18,10 @@ class Api::V1::BaseController < ApplicationController
     head status: :not_found
   end
 
+  rescue_from ActiveRecord::RecordInvalid do
+    head status: :unprocessable_entity
+  end
+
   private
 
   def ensure_host

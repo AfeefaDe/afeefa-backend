@@ -109,7 +109,7 @@ class OrgaTest < ActiveSupport::TestCase
     end
 
     should 'have associated orgas' do
-      orga = create(:orga)
+      orga = @admin.orgas.first
       another_orga = create(:another_orga)
 
       assert_empty orga.sub_orgas
@@ -121,48 +121,34 @@ class OrgaTest < ActiveSupport::TestCase
       assert_equal orga, another_orga.reload.parent_orga
     end
 
-    should 'I want to add a new suborga to my orga' do
-      new_orga = create(:orga)
+    should 'I want to create a new suborga for my orga' do
       orga = @admin.orgas.first
 
       assert_difference('orga.sub_orgas.count') do
-        orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
+        orga.create_suborga(admin: @admin,
+                            params: {:title => 'super-awesome orga',
+                                     :description => 'this orga is magnificent'})
       end
-
-      assert_equal(orga, new_orga.reload.parent_orga)
+      assert_equal(Orga.find_by_title('super-awesome orga'), orga.reload.children.last)
     end
 
-    should 'I must not add a new suborga to a foreign orga' do
-      new_orga = create(:orga)
-      orga = create(:another_orga)
-
-      assert_no_difference('orga.sub_orgas.count') do
-        assert_raise CanCan::AccessDenied do
-          orga.add_new_suborga(new_suborga: new_orga, admin: @user)
-        end
-      end
-
-      assert_nil new_orga.reload.parent_orga
-    end
-
-    should 'I must not add the same suborga to my orga again' do
-      new_orga = create(:orga)
+    should 'I want to create a new suborga for my orga, the orga must not exist' do
       orga = @admin.orgas.first
-
-      orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
+      some_orga = create(:another_orga)
 
       assert_no_difference('orga.sub_orgas.count') do
-        assert_raise OrgaIsAlreadySuborgaException do
-          orga.add_new_suborga(new_suborga: new_orga, admin: @admin)
+        assert_raise ActiveRecord::RecordInvalid do
+          orga.create_suborga(admin: @admin,
+                              params: {:title => some_orga.title,
+                                       :description => some_orga.description})
         end
       end
     end
 
     should 'I want to delete a parent_orga without deleting sub_orgas' do
-      parent_orga = create(:orga)
+      parent_orga = @admin.orgas.first
       middle_orga = create(:orga_with_admin, parent_orga: parent_orga)
-      last_orga = create(:orga, parent_orga: middle_orga)
-      User.current = middle_orga.admins.reload.first
+      last_orga = create(:another_orga, parent_orga: middle_orga)
 
       assert_includes(parent_orga.sub_orgas, middle_orga)
       assert_includes(middle_orga.sub_orgas, last_orga)

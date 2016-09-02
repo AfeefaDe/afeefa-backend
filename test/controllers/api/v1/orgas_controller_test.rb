@@ -56,6 +56,14 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_equal false, @orga[:active]
     end
 
+    should 'I want to create a suborga for my orga' do
+      Orga.any_instance.expects(:create_suborga).once
+      post :create_suborga, id: @orga.id, data: {type: 'orga',
+                                                 attributes: { title: 'some title',
+                                                               description: 'some description'} }
+      assert_response :created
+    end
+
     context 'interacting with a member' do
       setup do
         @member = create(:member, orga: @admin.orgas.first)
@@ -126,18 +134,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :no_content
       end
     end
-
-    context 'interacting with a suborga' do
-      setup do
-        @suborga = create(:another_orga)
-      end
-
-      should 'I want to add an existing orga to sub_orgas of my orga' do
-        Orga.any_instance.expects(:add_new_suborga).once
-        put :add_suborga, id: @orga.id, suborga_id: @suborga.id
-        assert_response :no_content
-      end
-    end
   end
 
   context 'As member' do
@@ -166,14 +162,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     should 'I must not add an existing user to my orga' do
       assert_no_difference('@orga.users.count') do
         put :add_member, id: @orga.id, user_id: create(:user).id
-        assert_response :forbidden
-      end
-    end
-
-    should 'I must not add an existing orga to sub_orgas of my orga' do
-      suborga = create(:another_orga)
-      assert_no_difference('@orga.users.count') do
-        put :add_suborga, id: @orga.id, suborga_id: suborga.id
         assert_response :forbidden
       end
     end

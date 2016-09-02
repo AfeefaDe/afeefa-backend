@@ -18,8 +18,8 @@ class Orga < ActiveRecord::Base
 
   validates_presence_of :title
   validates_length_of :title, minimum: 5
+  validates_uniqueness_of :title
 
-  before_destroy :check_destroy_right, prepend: true
   before_destroy :move_sub_orgas, prepend: true
 
   def add_new_member(new_member:, admin:)
@@ -32,13 +32,12 @@ class Orga < ActiveRecord::Base
     end
   end
 
-  def add_new_suborga(new_suborga:, admin:)
-    admin.can? :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
-    if sub_orgas.include?(new_suborga)
-      raise OrgaIsAlreadySuborgaException
-    else
-      sub_orgas << new_suborga
-    end
+  def create_suborga(admin:, params:)
+    admin.can? :write_orga_structure, self, 'You are not authorized to modify the structure of this organization!'
+    title = params[:title]
+    description = params[:description]
+    suborga = Orga.create!(title: title, description: description)
+    sub_orgas << suborga
   end
 
   def list_members(member:)
@@ -54,10 +53,6 @@ class Orga < ActiveRecord::Base
   def change_active_state(admin:, active:)
     admin.can? :write_orga_structure, self, 'You are not authorized to modify the state of this organization!'
     self.update(active: active)
-  end
-
-  def check_destroy_right
-    User.current.can? :write_orga_structure, self, 'You are not authorized to delete this organization!'
   end
 
   def move_sub_orgas
