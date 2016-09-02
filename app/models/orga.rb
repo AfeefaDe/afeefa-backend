@@ -41,18 +41,6 @@ class Orga < ActiveRecord::Base
     end
   end
 
-  def add_new_suborga(new_suborga:, admin:)
-    if admin.orga_admin?(self)
-      if sub_orgas.include?(new_suborga)
-        raise OrgaIsAlreadySuborgaException
-      else
-        sub_orgas << new_suborga
-      end
-    else
-      raise CanCan::AccessDenied.new('user is not admin of this orga', __method__, admin)
-    end
-  end
-
   def list_members(member:)
     member.can? :read_orga, self, 'You are not authorized to access the data of this organization!'
     users
