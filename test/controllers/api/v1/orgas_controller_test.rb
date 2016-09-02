@@ -255,7 +255,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       @orga2 = create(:another_orga)
       get :index
       expected = ActiveModelSerializers::SerializableResource.new(Orga.all, {}).to_json
-      pp expected
       assert_equal expected, response.body
     end
   end
