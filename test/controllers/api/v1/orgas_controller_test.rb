@@ -250,6 +250,14 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       expected = ActiveModelSerializers::SerializableResource.new(@orga, {}).to_json
       assert_equal expected, response.body
     end
+
+    should 'I want a list of all orgas' do
+      @orga2 = create(:another_orga)
+      get :index
+      expected = ActiveModelSerializers::SerializableResource.new(Orga.all, {}).to_json
+      pp expected
+      assert_equal expected, response.body
+    end
   end
 
 end
