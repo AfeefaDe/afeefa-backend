@@ -43,14 +43,14 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     end
 
     should 'I want to activate my orga' do
-      patch :activate, id: @orga.id
+      post :activate, id: @orga.id
       assert_response :no_content
       @orga.reload
       assert_equal true, @orga[:active]
     end
 
     should 'I want to deactivate my orga' do
-      patch :deactivate, id: @orga.id
+      post :deactivate, id: @orga.id
       assert_response :no_content
       @orga.reload
       assert_equal false, @orga[:active]
@@ -178,7 +178,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'I must not activate my orga' do
       active = @orga[:active]
-      patch :activate, id: @orga.id
+      post :activate, id: @orga.id
       assert_response :forbidden
       @orga.reload
       assert_equal @orga[:active], active
@@ -186,7 +186,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'I must not deactivate my orga' do
       active = @orga[:active]
-      patch :deactivate, id: @orga.id
+      post :deactivate, id: @orga.id
       assert_response :forbidden
       @orga.reload
       assert_equal @orga[:active], active
@@ -219,7 +219,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'I must not activate some orga' do
       active = @orga[:active]
-      patch :activate, id: @orga.id
+      post :activate, id: @orga.id
       assert_response :forbidden
       @orga.reload
       assert_equal @orga[:active], active
@@ -227,7 +227,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'I must not deactivate some orga' do
       active = @orga[:active]
-      patch :deactivate, id: @orga.id
+      post :deactivate, id: @orga.id
       assert_response :forbidden
       @orga.reload
       assert_equal @orga[:active], active
