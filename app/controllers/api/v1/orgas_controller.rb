@@ -62,6 +62,12 @@ class Api::V1::OrgasController < Api::V1::BaseController
     render json: @orga
   end
 
+  def destroy
+    current_api_v1_user.can? :write_orga_structure, @orga, 'You are not authorized to modify the structure of this organization!'
+    @orga.destroy!
+    head status: :no_content
+  end
+
   def create_suborga
     @orga.create_suborga(admin: current_api_v1_user, params: orga_params[:attributes])
     head status: :created

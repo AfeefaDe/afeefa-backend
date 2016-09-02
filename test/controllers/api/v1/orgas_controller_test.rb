@@ -56,6 +56,15 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_equal false, @orga[:active]
     end
 
+    should 'I want to delete my orga' do
+      assert_difference('Orga.count', -1) do
+        assert_difference('Role.count', -1) do
+          delete :destroy, id: @orga.id
+        end
+      end
+      assert_response :no_content
+    end
+
     should 'I want to create a suborga for my orga' do
       Orga.any_instance.expects(:create_suborga).once
       post :create_suborga, id: @orga.id, data: {type: 'orga',
@@ -191,6 +200,13 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       @orga.reload
       assert_equal @orga[:active], active
     end
+
+    should 'I must not delete my orga' do
+      assert_no_difference 'Orga.count' do
+        delete :destroy, id: @orga.id
+      end
+      assert_response :forbidden
+    end
   end
 
   context 'As user' do
@@ -244,6 +260,13 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       get :index
       expected = ActiveModelSerializers::SerializableResource.new(Orga.all, {}).to_json
       assert_equal expected, response.body
+    end
+
+    should 'I must not delete some orga' do
+      assert_no_difference 'Orga.count' do
+        delete :destroy, id: @orga.id
+      end
+      assert_response :forbidden
     end
   end
 

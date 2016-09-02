@@ -7,7 +7,7 @@ class Orga < ActiveRecord::Base
   alias_method :parent_orga=, :parent=
   alias_method :sub_orgas=, :children=
 
-  has_many :roles
+  has_many :roles, dependent: :destroy
   has_many :users, through: :roles
   has_many :admins, ->{where(roles: {title: Role::ORGA_ADMIN})}, through: :roles, source: :user
   has_many :locations
