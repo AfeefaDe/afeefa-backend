@@ -20,7 +20,7 @@ class Orga < ActiveRecord::Base
   validates_length_of :title, minimum: 5
   validates_uniqueness_of :title
 
-  before_destroy :move_sub_orgas, prepend: true
+  before_destroy :move_sub_orgas_to_parent, prepend: true
 
   def add_new_member(new_member:, admin:)
     admin.can? :write_orga_structure, self, 'You are not authorized to modify the user list of this organization!'
@@ -55,7 +55,7 @@ class Orga < ActiveRecord::Base
     self.update(active: active)
   end
 
-  def move_sub_orgas
+  def move_sub_orgas_to_parent
     sub_orgas.each do |suborga|
        suborga.parent_orga = parent_orga
        suborga.save!
