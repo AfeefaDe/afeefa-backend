@@ -129,7 +129,8 @@ class OrgaTest < ActiveSupport::TestCase
                             params: {:title => 'super-awesome orga',
                                      :description => 'this orga is magnificent'})
       end
-      assert_equal(Orga.find_by_title('super-awesome orga'), orga.reload.children.last)
+      assert_equal Orga.find_by_title('super-awesome orga'), orga.reload.children.last
+      assert @admin.orga_admin?(Orga.find_by_title('super-awesome orga'))
     end
 
     should 'I want to create a new suborga for my orga, the orga must not exist' do

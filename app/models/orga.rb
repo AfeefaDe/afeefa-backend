@@ -37,6 +37,7 @@ class Orga < ActiveRecord::Base
     title = params[:title]
     description = params[:description]
     suborga = Orga.create!(title: title, description: description)
+    Role.create!(user: admin, orga: suborga, title: Role::ORGA_ADMIN)
     sub_orgas << suborga
   end
 
