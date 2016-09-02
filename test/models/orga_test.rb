@@ -161,4 +161,39 @@ class OrgaTest < ActiveSupport::TestCase
     end
   end
 
+  context 'As member' do
+    setup do
+      @member = create(:member)
+    end
+
+    should 'I must not create a new suborga for an orga I am (only) a member in' do
+      orga = @member.orgas.first
+
+      assert_no_difference('orga.sub_orgas.count') do
+        assert_raise CanCan::AccessDenied do
+          orga.create_suborga(admin: @member,
+                              params: {:title => 'super-awesome orga',
+                                       :description => 'this orga is magnificent'})
+          end
+      end
+    end
+  end
+
+    context 'As user' do
+      setup do
+        @user = create(:user)
+      end
+
+      should 'I must not create a new suborga for an orga I am not a member in' do
+        orga = create(:orga)
+
+        assert_no_difference('orga.sub_orgas.count') do
+          assert_raise CanCan::AccessDenied do
+            orga.create_suborga(admin: @user,
+                                params: {:title => 'super-awesome orga',
+                                         :description => 'this orga is magnificent'})
+          end
+        end
+      end
+    end
 end
