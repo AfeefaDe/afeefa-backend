@@ -24,16 +24,6 @@ class UserTest < ActiveSupport::TestCase
       assert @user.has_attribute? :enabled_at
     end
 
-    should 'have a spoken language' do
-      skip 'noch nicht implementiert'
-      assert @user.has_attribute? :spoken_language
-    end
-
-    should 'have translator languages' do
-      skip 'noch nicht implementiert'
-      assert @user.has_attribute? :spoken_language
-    end
-
     should 'have orgas' do
       orga = create(:orga)
       role = build(:role, orga: orga, user: @user)
@@ -57,24 +47,24 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should 'be owner of things' do
-      market_entry = nil
-      assert_difference('MarketEntry.count') do
-        market_entry = create(:market_entry)
+      event = nil
+      assert_difference('Event.count') do
+        event = create(:event)
       end
 
-      assert_difference('@user.reload.market_entries.count') do
+      assert_difference('@user.reload.events.count') do
         assert_difference('@user.owner_thing_relations.count') do
           assert_difference('OwnerThingRelation.count') do
-            OwnerThingRelation.create(ownable: market_entry, thingable: @user)
+            OwnerThingRelation.create(ownable: event, thingable: @user)
           end
         end
       end
     end
 
     should 'be creator of things' do
-      assert_difference('@user.created_market_entries.count') do
-        market_entry = create(:market_entry, creator: @user)
-        assert_equal @user, market_entry.creator
+      assert_difference('@user.created_events.count') do
+        event = create(:event, creator: @user)
+        assert_equal @user, event.creator
       end
     end
 

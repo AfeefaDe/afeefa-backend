@@ -10,7 +10,7 @@ class CreateEvents < ActiveRecord::Migration
       t.boolean :support_wanted
       t.datetime :activated_at
       t.datetime :deactivated_at
-
+      t.integer :creator_id
       t.timestamps null: false
 
       # event specific data

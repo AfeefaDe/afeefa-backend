@@ -49,16 +49,10 @@ ActiveRecord::Schema.define(version: 20160818145113) do
     t.boolean  "support_wanted"
     t.datetime "activated_at"
     t.datetime "deactivated_at"
+    t.integer  "creator_id"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
     t.integer  "parent_id"
-  end
-
-  create_table "languages", force: :cascade do |t|
-    t.string   "code"
-    t.boolean  "rtl"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "locations", force: :cascade do |t|
@@ -71,26 +65,6 @@ ActiveRecord::Schema.define(version: 20160818145113) do
     t.integer  "orga_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "market_entries", force: :cascade do |t|
-    t.string   "title"
-    t.string   "description"
-    t.string   "public_speaker"
-    t.string   "location_type"
-    t.boolean  "support_wanted"
-    t.datetime "activated_at"
-    t.datetime "deactivated_at"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-    t.string   "type"
-    t.string   "way"
-    t.string   "availabilty"
-    t.datetime "requested_at"
-    t.datetime "assigned_at"
-    t.datetime "pending_since"
-    t.integer  "creator_id"
-    t.integer  "location_id"
   end
 
   create_table "orga_category_relations", force: :cascade do |t|
@@ -129,18 +103,6 @@ ActiveRecord::Schema.define(version: 20160818145113) do
   add_index "owner_thing_relations", ["ownable_type", "ownable_id"], name: "index_owner_thing_relations_on_ownable_type_and_ownable_id"
   add_index "owner_thing_relations", ["thingable_type", "thingable_id"], name: "index_owner_thing_relations_on_thingable_type_and_thingable_id"
 
-  create_table "pois", force: :cascade do |t|
-    t.string   "title"
-    t.string   "description"
-    t.string   "public_speaker"
-    t.string   "location_type"
-    t.boolean  "support_wanted"
-    t.datetime "activated_at"
-    t.datetime "deactivated_at"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
   create_table "roles", force: :cascade do |t|
     t.string   "title"
     t.integer  "user_id"
@@ -151,33 +113,6 @@ ActiveRecord::Schema.define(version: 20160818145113) do
 
   add_index "roles", ["orga_id"], name: "index_roles_on_orga_id"
   add_index "roles", ["user_id"], name: "index_roles_on_user_id"
-
-  create_table "tag_orga_relations", force: :cascade do |t|
-    t.integer  "orga_id"
-    t.integer  "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "tag_orga_relations", ["orga_id"], name: "index_tag_orga_relations_on_orga_id"
-  add_index "tag_orga_relations", ["tag_id"], name: "index_tag_orga_relations_on_tag_id"
-
-  create_table "tag_thing_relations", force: :cascade do |t|
-    t.integer  "tagable_id"
-    t.string   "tagable_type"
-    t.integer  "tag_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-  end
-
-  add_index "tag_thing_relations", ["tag_id"], name: "index_tag_thing_relations_on_tag_id"
-  add_index "tag_thing_relations", ["tagable_type", "tagable_id"], name: "index_tag_thing_relations_on_tagable_type_and_tagable_id"
-
-  create_table "tags", force: :cascade do |t|
-    t.string   "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
 
   create_table "thing_category_relations", force: :cascade do |t|
     t.integer  "category_id"

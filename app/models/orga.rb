@@ -13,7 +13,6 @@ class Orga < ActiveRecord::Base
   has_many :locations
 
   has_and_belongs_to_many :categories, join_table: 'orga_category_relations'
-  has_and_belongs_to_many :tags, join_table: 'tag_orga_relations'
 
 
   validates_presence_of :title

@@ -68,7 +68,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :orgas, except: [:create] do
+      resources :orgas, only: [:index, :show, :destroy, :update] do
         member do
           get :list_members, path: 'users'
           post :create_member, path: 'users'
