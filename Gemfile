@@ -45,7 +45,6 @@ gem 'devise' # see https://github.com/plataformatec/devise
 gem 'devise_token_auth'
 
 # roll and right management
-
 gem 'cancancan', '~> 1.10' # see https://github.com/CanCanCommunity/cancancan
 
 # image attachments
@@ -64,6 +63,9 @@ gem 'acts_as_tree', '~> 2.4'
 
 # pagination
 gem 'kaminari'
+
+# trailblazer architecture (operations)
+gem 'trailblazer-rails'
 
 # redmine integration
 gem 'airbrake', '~> 5.3'
