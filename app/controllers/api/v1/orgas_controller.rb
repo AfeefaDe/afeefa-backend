@@ -68,7 +68,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
     head status: :no_content
   end
 
-  def create_suborga
+  def create
     params.merge!(user: current_api_v1_user)
     run Orga::CreateSubOrga do
       head status: :created

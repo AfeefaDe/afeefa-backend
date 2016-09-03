@@ -68,17 +68,15 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :orgas, only: [:index, :show, :destroy, :update] do
+      resources :orgas, only: [:create, :index, :show, :destroy, :update] do
         member do
           get :list_members, path: 'users'
           post :create_member, path: 'users'
           put :add_member, path: 'users/:user_id'
-          post :create_suborga, path: 'suborgas'
           delete :remove_member, path: 'users/:user_id'
-          put :promote_member, path: 'users/:user_id/promote'
-          put :demote_admin, path: 'users/:user_id/demote'
-          post :activate
-          post :deactivate
+          #post :create_suborga, path: 'suborgas'
+          #put :promote_member, path: 'users/:user_id/promote'
+          #put :demote_admin, path: 'users/:user_id/demote'
         end
       end
     end

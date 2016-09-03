@@ -11,6 +11,40 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       @user_json = { forename: 'Rudi', surname: 'Dutschke', email: 'bob@afeefa.de' }
     end
 
+    should 'I want to create a suborga for my orga' do
+      Orga::CreateSubOrga.any_instance.expects(:process).once
+      post :create, id: @orga.id, data: {
+          type: 'orga',
+          attributes: {
+              title: 'some title',
+              description: 'some description'
+          }
+      }
+      assert_response :created
+    end
+
+    should 'I want to activate my orga' do
+      Orga::ActivateOrga.any_instance.expects(:process).once
+      patch :update, id: @orga.id, data: {
+          type: 'orga',
+          attributes: {
+              active: true
+          }
+      }
+      assert_response :no_content
+    end
+
+    should 'I want to deactivate my orga' do
+      Orga::ActivateOrga.any_instance.expects(:process).once
+      patch :update, id: @orga.id, data: {
+          type: 'orga',
+          attributes: {
+              active: false
+          }
+      }
+      assert_response :no_content
+    end
+
     should 'I want to create a new member in orga' do
       assert_difference '@orga.users.count' do
         post :create_member, id: @orga.id, user: @user_json
@@ -42,20 +76,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       end
     end
 
-    should 'I want to activate my orga' do
-      post :activate, id: @orga.id
-      assert_response :no_content
-      @orga.reload
-      assert_equal true, @orga[:active]
-    end
-
-    should 'I want to deactivate my orga' do
-      post :deactivate, id: @orga.id
-      assert_response :no_content
-      @orga.reload
-      assert_equal false, @orga[:active]
-    end
-
     should 'I want to delete my orga' do
       assert_difference('Orga.count', -1) do
         assert_difference('Role.count', -1) do
@@ -63,14 +83,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         end
       end
       assert_response :no_content
-    end
-
-    should 'I want to create a suborga for my orga' do
-      Orga::CreateSubOrga.any_instance.expects(:process).once
-      post :create_suborga, id: @orga.id, data: { type: 'orga',
-                                                  attributes: { title: 'some title',
-                                                                description: 'some description' } }
-      assert_response :created
     end
 
     context 'interacting with a member' do
@@ -101,47 +113,47 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
         assert_response :not_found
       end
 
-      should 'I want to promote a member to admin, user is not in orga' do
-        put :promote_member, id: @orga.id, user_id: @user.id
-        assert_response :not_found
-      end
-
-      should 'I want to promote a member to admin, am not admin' do
-        stub_current_user(user: @user)
-
-        put :promote_member, id: @orga.id, user_id: @member.id
-        assert_response :forbidden
-      end
-
-      should 'I want to promote a member to admin' do
-        @admin.expects(:promote_member_to_admin).once
-        put :promote_member, id: @orga.id, user_id: @member.id
-        assert_response :no_content
-      end
-
-      should 'I want to demote an admin to member, user is not in orga' do
-        put :demote_admin, id: @orga.id, user_id: @user.id
-        assert_response :not_found
-      end
-
-      should 'I want to demote an admin to member, am not admin' do
-        stub_current_user(user: @user)
-
-        put :demote_admin, id: @orga.id, user_id: @member.id
-        assert_response :forbidden
-      end
-
-      should 'I want to demote an admin to member' do
-        User.any_instance.expects(:demote_admin_to_member).once
-        put :demote_admin, id: @orga.id, user_id: @member.id
-        assert_response :no_content
-      end
-
-      should 'I want to add an existing user to my orga' do
-        Orga.any_instance.expects(:add_new_member).once
-        put :add_member, id: @orga.id, user_id: @user.id
-        assert_response :no_content
-      end
+      # should 'I want to promote a member to admin, user is not in orga' do
+      #   put :promote_member, id: @orga.id, user_id: @user.id
+      #   assert_response :not_found
+      # end
+      #
+      # should 'I want to promote a member to admin, am not admin' do
+      #   stub_current_user(user: @user)
+      #
+      #   put :promote_member, id: @orga.id, user_id: @member.id
+      #   assert_response :forbidden
+      # end
+      #
+      # should 'I want to promote a member to admin' do
+      #   @admin.expects(:promote_member_to_admin).once
+      #   put :promote_member, id: @orga.id, user_id: @member.id
+      #   assert_response :no_content
+      # end
+      #
+      # should 'I want to demote an admin to member, user is not in orga' do
+      #   put :demote_admin, id: @orga.id, user_id: @user.id
+      #   assert_response :not_found
+      # end
+      #
+      # should 'I want to demote an admin to member, am not admin' do
+      #   stub_current_user(user: @user)
+      #
+      #   put :demote_admin, id: @orga.id, user_id: @member.id
+      #   assert_response :forbidden
+      # end
+      #
+      # should 'I want to demote an admin to member' do
+      #   User.any_instance.expects(:demote_admin_to_member).once
+      #   put :demote_admin, id: @orga.id, user_id: @member.id
+      #   assert_response :no_content
+      # end
+      #
+      # should 'I want to add an existing user to my orga' do
+      #   Orga.any_instance.expects(:add_new_member).once
+      #   put :add_member, id: @orga.id, user_id: @user.id
+      #   assert_response :no_content
+      # end
     end
   end
 
@@ -184,22 +196,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_equal @orga[:description], desc
     end
 
-    should 'I must not activate my orga' do
-      active = @orga[:active]
-      post :activate, id: @orga.id
-      assert_response :forbidden
-      @orga.reload
-      assert_equal @orga[:active], active
-    end
-
-    should 'I must not deactivate my orga' do
-      active = @orga[:active]
-      post :deactivate, id: @orga.id
-      assert_response :forbidden
-      @orga.reload
-      assert_equal @orga[:active], active
-    end
-
     should 'I must not delete my orga' do
       assert_no_difference 'Orga.count' do
         delete :destroy, id: @orga.id
@@ -229,22 +225,6 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
       assert_not_equal @orga[:title], 'newTitle'
       assert_equal @orga[:description], desc
       assert_in_delta @orga[:updated_at], upd, 0.0001
-    end
-
-    should 'I must not activate some orga' do
-      active = @orga[:active]
-      post :activate, id: @orga.id
-      assert_response :forbidden
-      @orga.reload
-      assert_equal @orga[:active], active
-    end
-
-    should 'I must not deactivate some orga' do
-      active = @orga[:active]
-      post :deactivate, id: @orga.id
-      assert_response :forbidden
-      @orga.reload
-      assert_equal @orga[:active], active
     end
 
     should 'show orga' do
