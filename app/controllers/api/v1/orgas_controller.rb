@@ -63,7 +63,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def destroy
-    current_api_v1_user.can? :write_orga_structure, @orga, 'You are not authorized to modify the structure of this organization!'
+    current_api_v1_user.can! :write_orga_structure, @orga, 'You are not authorized to modify the structure of this organization!'
     @orga.destroy!
     head status: :no_content
   end
@@ -90,7 +90,7 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def orga_params
-    params.require(:data).permit(:id, :type, :attributes => [:title, :description, :logo])
+    params.require(:data).permit(:id, :type, :attributes => [:title, :description])
   end
 
   def orgas_params

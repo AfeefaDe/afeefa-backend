@@ -177,11 +177,10 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'I want to update the data of the orga' do
       desc = @orga[:description]
-      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle', logo: 'newLogo.png'}}
+      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle'}}
       assert_response :success
       @orga.reload
       assert_equal @orga[:title], 'newTitle'
-      assert_equal @orga[:logo], 'newLogo.png'
       assert_equal @orga[:description], desc
     end
 
@@ -224,11 +223,10 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     should 'I want to update the data of some orga, I am not member in orga' do
       desc = @orga[:description]
       upd = @orga[:updated_at]
-      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle', logo: 'newLogo.png'}}
+      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle'}}
       assert_response :forbidden
       @orga.reload
       assert_not_equal @orga[:title], 'newTitle'
-      assert_not_equal @orga[:logo], 'newLogo.png'
       assert_equal @orga[:description], desc
       assert_in_delta @orga[:updated_at], upd, 0.0001
     end

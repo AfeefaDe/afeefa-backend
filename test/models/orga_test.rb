@@ -8,17 +8,12 @@ class OrgaTest < ActiveSupport::TestCase
     end
 
     should 'orga attributes' do
-      nil_defaults = [:title, :description, :api_key, :logo]
-      false_defaults = [:support_wanted, :api_access]
-      (nil_defaults + false_defaults).each do |attr|
+      nil_defaults = [:title, :description]
+      (nil_defaults).each do |attr|
         assert @my_orga.respond_to?(attr), "orga does not respond to #{attr}"
       end
       nil_defaults.each do |attr|
         assert_equal nil, @my_orga.send(attr)
-      end
-      false_defaults.each do |attr|
-        assert !@my_orga.send(attr)
-        assert !@my_orga.send("#{attr}?")
       end
     end
 

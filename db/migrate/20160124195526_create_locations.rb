@@ -4,13 +4,18 @@ class CreateLocations < ActiveRecord::Migration
       t.string :lat
       t.string :lon
 
-      t.string :osm_id
+      t.string :street
+      t.string :number
+      t.string :addition
+      t.string :zip
+      t.string :city
+      t.string :district
+      t.string :state
+      t.string :country
 
-      t.string :scope
-      t.string :order
       t.boolean :displayed
 
-      t.integer :organization_id
+      t.references :locatable, polymorphic: true, index: true
 
       t.timestamps null: false
     end

@@ -10,7 +10,7 @@ class OrgaSerializerTest < ActiveSupport::TestCase
     assert hash[:data].key?(:type)
     assert hash[:data].key?(:attributes)
     [
-        :title, :description, :logo, :support_wanted, :created_at, :updated_at
+        :title, :description, :created_at, :updated_at
     ].each do |attr|
       assert_equal(
           orga.send(attr.to_s), hash[:data][:attributes][attr.to_s.gsub('_', '-')],
