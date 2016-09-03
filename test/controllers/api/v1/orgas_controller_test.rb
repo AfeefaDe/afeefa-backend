@@ -37,7 +37,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     should 'I must not create a new user that already exists' do
       @user = create(:user)
       assert_no_difference 'User.count' do
-        post :create_member, id: @orga.id, user: {forename: 'a', surname: 'b', email: @user.email}
+        post :create_member, id: @orga.id, user: { forename: 'a', surname: 'b', email: @user.email }
         assert_response :unprocessable_entity
       end
     end
@@ -66,10 +66,10 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     end
 
     should 'I want to create a suborga for my orga' do
-      Orga.any_instance.expects(:create_suborga).once
-      post :create_suborga, id: @orga.id, data: {type: 'orga',
-                                                 attributes: { title: 'some title',
-                                                               description: 'some description'} }
+      Orga::CreateSubOrga.any_instance.expects(:process).once
+      post :create_suborga, id: @orga.id, data: { type: 'orga',
+                                                  attributes: { title: 'some title',
+                                                                description: 'some description' } }
       assert_response :created
     end
 
@@ -177,7 +177,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
 
     should 'I want to update the data of the orga' do
       desc = @orga[:description]
-      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle'}}
+      patch :update, id: @orga.id, data: { type: 'orga', id: @orga.id, attributes: { title: 'newTitle' } }
       assert_response :success
       @orga.reload
       assert_equal @orga[:title], 'newTitle'
@@ -223,7 +223,7 @@ class Api::V1::OrgasControllerTest < ActionController::TestCase
     should 'I want to update the data of some orga, I am not member in orga' do
       desc = @orga[:description]
       upd = @orga[:updated_at]
-      patch :update, id: @orga.id, data: {type: 'orga', id: @orga.id, attributes: {title: 'newTitle'}}
+      patch :update, id: @orga.id, data: { type: 'orga', id: @orga.id, attributes: { title: 'newTitle' } }
       assert_response :forbidden
       @orga.reload
       assert_not_equal @orga[:title], 'newTitle'

@@ -116,31 +116,6 @@ class OrgaTest < ActiveSupport::TestCase
       assert_equal orga, another_orga.reload.parent_orga
     end
 
-    should 'I want to create a new suborga for my orga' do
-      orga = @admin.orgas.first
-
-      assert_difference('orga.sub_orgas.count') do
-        orga.create_suborga(admin: @admin,
-                            params: {:title => 'super-awesome orga',
-                                     :description => 'this orga is magnificent'})
-      end
-      assert_equal Orga.find_by_title('super-awesome orga'), orga.reload.children.last
-      assert @admin.orga_admin?(Orga.find_by_title('super-awesome orga'))
-    end
-
-    should 'I want to create a new suborga for my orga, the orga must not exist' do
-      orga = @admin.orgas.first
-      some_orga = create(:another_orga)
-
-      assert_no_difference('orga.sub_orgas.count') do
-        assert_raise ActiveRecord::RecordInvalid do
-          orga.create_suborga(admin: @admin,
-                              params: {:title => some_orga.title,
-                                       :description => some_orga.description})
-        end
-      end
-    end
-
     should 'I want to delete a parent_orga without deleting sub_orgas' do
       parent_orga = @admin.orgas.first
       middle_orga = create(:orga_with_admin, parent_orga: parent_orga)
@@ -168,28 +143,28 @@ class OrgaTest < ActiveSupport::TestCase
       assert_no_difference('orga.sub_orgas.count') do
         assert_raise CanCan::AccessDenied do
           orga.create_suborga(admin: @member,
-                              params: {:title => 'super-awesome orga',
-                                       :description => 'this orga is magnificent'})
-          end
+                              params: { :title => 'super-awesome orga',
+                                        :description => 'this orga is magnificent' })
+        end
       end
     end
   end
 
-    context 'As user' do
-      setup do
-        @user = create(:user)
-      end
+  context 'As user' do
+    setup do
+      @user = create(:user)
+    end
 
-      should 'I must not create a new suborga for an orga I am not a member in' do
-        orga = create(:orga)
+    should 'I must not create a new suborga for an orga I am not a member in' do
+      orga = create(:orga)
 
-        assert_no_difference('orga.sub_orgas.count') do
-          assert_raise CanCan::AccessDenied do
-            orga.create_suborga(admin: @user,
-                                params: {:title => 'super-awesome orga',
-                                         :description => 'this orga is magnificent'})
-          end
+      assert_no_difference('orga.sub_orgas.count') do
+        assert_raise CanCan::AccessDenied do
+          orga.create_suborga(admin: @user,
+                              params: { :title => 'super-awesome orga',
+                                        :description => 'this orga is magnificent' })
         end
       end
     end
+  end
 end

@@ -69,8 +69,10 @@ class Api::V1::OrgasController < Api::V1::BaseController
   end
 
   def create_suborga
-    @orga.create_suborga(admin: current_api_v1_user, params: orga_params[:attributes])
-    head status: :created
+    params.merge!(user: current_api_v1_user)
+    run Orga::CreateSubOrga do
+      head status: :created
+    end
   end
 
   def activate

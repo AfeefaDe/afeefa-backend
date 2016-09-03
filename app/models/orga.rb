@@ -14,11 +14,6 @@ class Orga < ActiveRecord::Base
 
   has_and_belongs_to_many :categories, join_table: 'orga_category_relations'
 
-
-  validates_presence_of :title
-  validates_length_of :title, minimum: 5
-  validates_uniqueness_of :title
-
   before_destroy :move_sub_orgas_to_parent, prepend: true
 
   def add_new_member(new_member:, admin:)
@@ -29,15 +24,6 @@ class Orga < ActiveRecord::Base
       Role.create!(user: new_member, orga: self, title: Role::ORGA_MEMBER)
       return new_member
     end
-  end
-
-  def create_suborga(admin:, params:)
-    admin.can! :write_orga_structure, self, 'You are not authorized to modify the structure of this organization!'
-    title = params[:title]
-    description = params[:description]
-    suborga = Orga.create!(title: title, description: description)
-    Role.create!(user: admin, orga: suborga, title: Role::ORGA_ADMIN)
-    sub_orgas << suborga
   end
 
   def list_members(member:)
